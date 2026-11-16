@@ -1,0 +1,7 @@
+/build/
+/cmake-build-*/
+/Output/*
+!/Output/.gitkeep
+*.user
+*.suo
+*.log

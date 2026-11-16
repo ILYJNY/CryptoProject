@@ -1,0 +1,74 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 27,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "msvc-ninja-debug",
+      "displayName": "MSVC + Ninja (Debug)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/msvc-ninja-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_STANDARD": "20",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CRYPTO_ENABLE_CUDA": "ON",
+        "CRYPTO_REQUIRE_CUDA": "OFF",
+        "CRYPTO_BUILD_TESTS": "ON",
+        "CRYPTO_BUILD_BENCHMARKS": "ON",
+        "CRYPTO_DEFAULT_BACKEND": "AUTO"
+      }
+    },
+    {
+      "name": "msvc-ninja-release",
+      "displayName": "MSVC + Ninja (Release)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/msvc-ninja-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_STANDARD": "20",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CRYPTO_ENABLE_CUDA": "ON",
+        "CRYPTO_REQUIRE_CUDA": "OFF",
+        "CRYPTO_BUILD_TESTS": "ON",
+        "CRYPTO_BUILD_BENCHMARKS": "ON",
+        "CRYPTO_DEFAULT_BACKEND": "AUTO"
+      }
+    },
+    {
+      "name": "cpu-only-debug",
+      "displayName": "CPU only (Debug)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/cpu-only-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_STANDARD": "20",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CRYPTO_ENABLE_CUDA": "OFF",
+        "CRYPTO_BUILD_TESTS": "ON",
+        "CRYPTO_DEFAULT_BACKEND": "CPU"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "build-debug", "configurePreset": "msvc-ninja-debug" },
+    { "name": "build-release", "configurePreset": "msvc-ninja-release" },
+    { "name": "build-cpu-only", "configurePreset": "cpu-only-debug" }
+  ],
+  "testPresets": [
+    {
+      "name": "test-debug",
+      "configurePreset": "msvc-ninja-debug",
+      "output": { "outputOnFailure": true }
+    }
+  ]
+}

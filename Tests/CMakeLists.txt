@@ -1,0 +1,39 @@
+add_executable(CommonSmokeTests CommonSmokeTests.cpp)
+target_link_libraries(CommonSmokeTests PRIVATE crypto_common)
+crypto_apply_compiler_options(CommonSmokeTests)
+add_test(NAME CommonSmokeTests COMMAND CommonSmokeTests)
+
+add_executable(ComputeEngineSmokeTests ComputeEngineSmokeTests.cpp)
+target_link_libraries(ComputeEngineSmokeTests PRIVATE crypto_compute_engine)
+crypto_apply_compiler_options(ComputeEngineSmokeTests)
+add_test(NAME ComputeEngineSmokeTests COMMAND ComputeEngineSmokeTests)
+
+add_executable(ProjectSmokeTests ProjectSmokeTests.cpp)
+target_include_directories(ProjectSmokeTests PRIVATE "${CMAKE_SOURCE_DIR}")
+target_link_libraries(ProjectSmokeTests PRIVATE
+    crypto_common
+    crypto_system_standard
+    crypto_system_educational
+    crypto_analyzer_standard
+    crypto_analyzer_educational
+    crypto_integrated
+)
+crypto_apply_compiler_options(ProjectSmokeTests)
+add_test(NAME ProjectSmokeTests COMMAND ProjectSmokeTests)
+
+add_executable(QuantumSmokeTests QuantumSmokeTests.cpp)
+target_link_libraries(QuantumSmokeTests PRIVATE crypto_quantum)
+crypto_apply_compiler_options(QuantumSmokeTests)
+add_test(NAME QuantumSmokeTests COMMAND QuantumSmokeTests)
+
+add_executable(MLKEM768SmokeTests MLKEM768SmokeTests.cpp)
+target_include_directories(MLKEM768SmokeTests PRIVATE "${CMAKE_SOURCE_DIR}")
+target_link_libraries(MLKEM768SmokeTests PRIVATE crypto_system_standard)
+crypto_apply_compiler_options(MLKEM768SmokeTests)
+add_test(NAME MLKEM768SmokeTests COMMAND MLKEM768SmokeTests)
+
+add_executable(CryptoSetAnalysisSmokeTests CryptoSetAnalysisSmokeTests.cpp)
+target_include_directories(CryptoSetAnalysisSmokeTests PRIVATE "${CMAKE_SOURCE_DIR}")
+target_link_libraries(CryptoSetAnalysisSmokeTests PRIVATE crypto_set_analysis crypto_integrated_crypto_analysis)
+crypto_apply_compiler_options(CryptoSetAnalysisSmokeTests)
+add_test(NAME CryptoSetAnalysisSmokeTests COMMAND CryptoSetAnalysisSmokeTests)

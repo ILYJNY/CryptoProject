@@ -1,0 +1,6 @@
+build/
+build-*/
+cmake-build-*/
+Output/*.csv
+*.user
+*.suo
