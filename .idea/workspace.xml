@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="BackendCodeEditorMiscSettings">
+    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
+    <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
+    <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
+  </component>
+  <component name="CMakePresetLoader"><![CDATA[{
+  "useNewFormat": true
+}]]></component>
+  <component name="CMakeProjectFlavorService">
+    <option name="flavorId" value="CMakePlainProjectFlavor" />
+  </component>
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
+    <generated>
+      <config projectName="CryptoProject" targetName="crypto_integrated_educational_analysis" />
+      <config projectName="CryptoProject" targetName="crypto_educational_set_analysis" />
+      <config projectName="CryptoProject" targetName="EducationalCryptoSetAnalysisSmokeTests" />
+      <config projectName="CryptoProject" targetName="QuantumSmokeTests" />
+      <config projectName="CryptoProject" targetName="crypto_compute_engine" />
+      <config projectName="CryptoProject" targetName="ComputeEngineSmokeTests" />
+      <config projectName="CryptoProject" targetName="crypto_analyzer_standard" />
+      <config projectName="CryptoProject" targetName="crypto_quantum" />
+      <config projectName="CryptoProject" targetName="crypto_system_educational" />
+      <config projectName="CryptoProject" targetName="crypto_system_standard" />
+      <config projectName="CryptoProject" targetName="crypto_integrated" />
+      <config projectName="CryptoProject" targetName="crypto_common" />
+      <config projectName="CryptoProject" targetName="crypto_benchmark" />
+      <config projectName="CryptoProject" targetName="MLKEM768SmokeTests" />
+      <config projectName="CryptoProject" targetName="crypto_set_analysis" />
+      <config projectName="CryptoProject" targetName="crypto_analyzer_educational" />
+      <config projectName="CryptoProject" targetName="crypto_integrated_crypto_analysis" />
+      <config projectName="CryptoProject" targetName="CommonSmokeTests" />
+      <config projectName="CryptoProject" targetName="CryptoSetAnalysisSmokeTests" />
+      <config projectName="CryptoProject" targetName="CryptoProject" />
+      <config projectName="CryptoProject" targetName="ProjectSmokeTests" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+      <configuration PROFILE_NAME="msvc-ninja-debug" PROFILE_DISPLAY_NAME="MSVC + Ninja (Debug)" ENABLED="false" FROM_PRESET="true" GENERATION_DIR="$PROJECT_DIR$/build/msvc-ninja-debug" />
+      <configuration PROFILE_NAME="msvc-ninja-release" PROFILE_DISPLAY_NAME="MSVC + Ninja (Release)" ENABLED="false" FROM_PRESET="true" GENERATION_DIR="$PROJECT_DIR$/build/msvc-ninja-release" />
+      <configuration PROFILE_NAME="cpu-only-debug" PROFILE_DISPLAY_NAME="CPU only (Debug)" ENABLED="false" FROM_PRESET="true" GENERATION_DIR="$PROJECT_DIR$/build/cpu-only-debug" />
+      <configuration PROFILE_NAME="msvc-ninja-debug - build-debug" ENABLED="false" FROM_PRESET="true" GENERATION_DIR="$PROJECT_DIR$/build/msvc-ninja-debug" />
+      <configuration PROFILE_NAME="msvc-ninja-release - build-release" ENABLED="false" FROM_PRESET="true" GENERATION_DIR="$PROJECT_DIR$/build/msvc-ninja-release" />
+      <configuration PROFILE_NAME="cpu-only-debug - build-cpu-only" ENABLED="false" FROM_PRESET="true" GENERATION_DIR="$PROJECT_DIR$/build/cpu-only-debug" />
+    </configurations>
+  </component>
+  <component name="CargoProjects">
+    <cargoProject FILE="$PROJECT_DIR$/boost_1_90_0/libs/redis/benchmarks/rust/echo_server_direct/Cargo.toml" />
+    <cargoProject FILE="$PROJECT_DIR$/boost_1_90_0/libs/redis/benchmarks/rust/echo_server_over_redis/Cargo.toml" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c6cb648a-14b2-4d98-a65c-6ebe4394995b" name="변경" comment="2.3.4 UPDATE">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CryptoSetAnalysis/CryptoSetAnalysis.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/CryptoSetAnalysis/CryptoSetAnalysis.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CryptoSetAnalysis/CryptoSetAnalysis.h" beforeDir="false" afterPath="$PROJECT_DIR$/CryptoSetAnalysis/CryptoSetAnalysis.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CryptoSetAnalysis/Detail/QuantumAttackAnalysis.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/CryptoSetAnalysis/Detail/QuantumAttackAnalysis.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CryptoSystem/Educational/AES/ToyAESKeySearch.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/CryptoSystem/Educational/AES/ToyAESKeySearch.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CryptoSystem/Educational/AES/ToyAESKeySearch.h" beforeDir="false" afterPath="$PROJECT_DIR$/CryptoSystem/Educational/AES/ToyAESKeySearch.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IntegratedCryptoAnalysis/IntegratedCryptoAnalysis.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/IntegratedCryptoAnalysis/IntegratedCryptoAnalysis.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/CryptoSetAnalysisSmokeTests.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/CryptoSetAnalysisSmokeTests.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VERSION.txt" beforeDir="false" afterPath="$PROJECT_DIR$/VERSION.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="56601" />
+    <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "ILYJNY"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/ILYJNY/CryptoProject.git",
+    "accountId": "f0680fb7-6ba7-46fa-8b9f-4aaa982e3bb6"
+  }
+}]]></component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="xmvLxXTU" />
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="CLion" />
+    <option name="majorVersion" value="2026" />
+    <option name="minorVersion" value="1.1" />
+    <option name="productBranch" value="Classic" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 1
+}]]></component>
+  <component name="ProjectId" id="3MCQQGlpB3eHlC5aZKb0MLrZ0qV" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.RadMigrateCodeStyle": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "RunOnceActivity.west.config.association.type.startup.service": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "ctest.advertisement.all.test.configuration.is.created": "true",
+    "git-widget-placeholder": "master",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
+    "org.rust.first.attach.projects": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="CMake 애플리케이션.CryptoProject">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CommonSmokeTests" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="CommonSmokeTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="CryptoProject" RUN_TARGET_NAME="CommonSmokeTests">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ComputeEngineSmokeTests" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="ComputeEngineSmokeTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="CryptoProject" RUN_TARGET_NAME="ComputeEngineSmokeTests">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CryptoProject" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="CryptoProject" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="CryptoProject" RUN_TARGET_NAME="CryptoProject">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CryptoSetAnalysisSmokeTests" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="CryptoSetAnalysisSmokeTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="CryptoProject" RUN_TARGET_NAME="CryptoSetAnalysisSmokeTests">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="EducationalCryptoSetAnalysisSmokeTests" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="EducationalCryptoSetAnalysisSmokeTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="CryptoProject" RUN_TARGET_NAME="EducationalCryptoSetAnalysisSmokeTests">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MLKEM768SmokeTests" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="MLKEM768SmokeTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="CryptoProject" RUN_TARGET_NAME="MLKEM768SmokeTests">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ProjectSmokeTests" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="ProjectSmokeTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="CryptoProject" RUN_TARGET_NAME="ProjectSmokeTests">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="QuantumSmokeTests" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="QuantumSmokeTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="CryptoProject" RUN_TARGET_NAME="QuantumSmokeTests">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="crypto_analyzer_educational" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="crypto_analyzer_educational" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="crypto_analyzer_standard" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="crypto_analyzer_standard" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="crypto_benchmark" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="crypto_benchmark" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="crypto_common" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="crypto_common" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="crypto_compute_engine" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="crypto_compute_engine" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="crypto_educational_set_analysis" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="crypto_educational_set_analysis" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="crypto_integrated" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="crypto_integrated" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="crypto_integrated_crypto_analysis" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="crypto_integrated_crypto_analysis" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="crypto_integrated_educational_analysis" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="crypto_integrated_educational_analysis" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="crypto_quantum" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="crypto_quantum" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="crypto_set_analysis" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="crypto_set_analysis" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="crypto_system_educational" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="crypto_system_educational" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="crypto_system_standard" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="crypto_system_standard" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="모든 CTest" type="CTestRunConfiguration" factoryName="CTestRun" PROGRAM_PARAMS="--extra-verbose" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" WORKING_DIR="file://$CMakeCurrentLocalGenerationDir$" PASS_PARENT_ENVS_2="true" RUN_PATH="$CTestCurrentExecutableName$" EXPLICIT_BUILD_TARGET_NAME="all" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="CMake 애플리케이션.crypto_analyzer_educational" />
+      <item itemvalue="CMake 애플리케이션.crypto_analyzer_standard" />
+      <item itemvalue="CMake 애플리케이션.crypto_benchmark" />
+      <item itemvalue="CMake 애플리케이션.crypto_common" />
+      <item itemvalue="CMake 애플리케이션.crypto_compute_engine" />
+      <item itemvalue="CMake 애플리케이션.crypto_educational_set_analysis" />
+      <item itemvalue="CMake 애플리케이션.crypto_integrated" />
+      <item itemvalue="CMake 애플리케이션.crypto_integrated_crypto_analysis" />
+      <item itemvalue="CMake 애플리케이션.crypto_integrated_educational_analysis" />
+      <item itemvalue="CMake 애플리케이션.crypto_quantum" />
+      <item itemvalue="CMake 애플리케이션.crypto_set_analysis" />
+      <item itemvalue="CMake 애플리케이션.crypto_system_educational" />
+      <item itemvalue="CMake 애플리케이션.crypto_system_standard" />
+      <item itemvalue="CMake 애플리케이션.CryptoProject" />
+      <item itemvalue="CMake 애플리케이션.CommonSmokeTests" />
+      <item itemvalue="CMake 애플리케이션.ComputeEngineSmokeTests" />
+      <item itemvalue="CMake 애플리케이션.CryptoSetAnalysisSmokeTests" />
+      <item itemvalue="CMake 애플리케이션.EducationalCryptoSetAnalysisSmokeTests" />
+      <item itemvalue="CMake 애플리케이션.MLKEM768SmokeTests" />
+      <item itemvalue="CMake 애플리케이션.ProjectSmokeTests" />
+      <item itemvalue="CMake 애플리케이션.QuantumSmokeTests" />
+      <item itemvalue="CTest 애플리케이션.모든 CTest" />
+    </list>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="디폴트 작업">
+      <changelist id="c6cb648a-14b2-4d98-a65c-6ebe4394995b" name="변경" comment="" />
+      <created>1794852054912</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1794852054912</updated>
+      <workItem from="1794852059410" duration="675000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="2.3.4 UPDATE" />
+    <option name="LAST_COMMIT_MESSAGE" value="2.3.4 UPDATE" />
+  </component>
+</project>
