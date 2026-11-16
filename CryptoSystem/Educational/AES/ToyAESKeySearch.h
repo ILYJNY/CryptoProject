@@ -13,6 +13,7 @@ namespace crypto::educational
     struct ToyAesPublicInstance
     {
         standard::AesGcmCiphertext ciphertext;
+        std::vector<std::uint8_t> associated_data;
         std::size_t unknown_bits = 16U;
     };
 
@@ -38,5 +39,7 @@ namespace crypto::educational
 
     // This deliberately restricts the keyspace to 4-16 unknown bits for a self-generated demonstration.
     [[nodiscard]] ToyAesSample generate_toy_aes_sample(std::size_t unknown_bits = 16U);
+    [[nodiscard]] ToyAesSample generate_toy_aes_sample(
+        std::size_t unknown_bits, const std::string& plaintext);
     [[nodiscard]] ToyAesAnalysis analyze_toy_aes(const ToyAesPublicInstance& instance);
 }

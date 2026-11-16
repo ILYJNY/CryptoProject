@@ -43,6 +43,15 @@ namespace crypto::set_analysis
         double shor_toy_simulator_ms = 0.0;
         bool shor_toy_demo_passed = false;
         std::string shor_toy_status = "NOT_RUN";
+
+        // Separate full-parameter attack-time scenario estimates. These are not
+        // the wall-clock time of the tiny classical simulator demonstrations.
+        long double shor_toffoli_gates_estimate = 0.0L;
+        long double shor_attack_time_at_one_microsecond_per_toffoli_seconds = 0.0L;
+        std::string fastest_quantified_attack = "Not estimated";
+        long double fastest_quantified_attack_seconds = 0.0L;
+        bool fastest_quantified_attack_is_complete_for_set = false;
+        std::string attack_time_scope;
         std::string qualification;
     };
 

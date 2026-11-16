@@ -1,4 +1,4 @@
-# CryptoProject v2.2.0
+# CryptoProject v2.3.4
 
 A modular C++20 learning project that brings together standard cryptographic demonstrations,
 small educational cryptosystems, defensive validation, a classical quantum state-vector simulator,
@@ -103,6 +103,17 @@ RSA-PSS is a signature scheme, not a key-agreement scheme. RSA-OAEP is used for 
 - No sender digital signature is included in this set. The GCM tag authenticates ciphertext integrity, but it does not by itself identify the sender.
 
 Each set generates its own secret, derives its own AES key, encrypts/decrypts the same input message, and records operation times. The individual comparison reports include key generation, key establishment, SHA-256, HKDF, AES encryption/decryption, and signature generation/verification where the set has signatures.
+
+
+### Separate attack-time output (v2.2.1)
+
+Each set report now displays three separate time categories:
+
+1. **Measured cryptosystem operation time**: actual key generation, key establishment, hashing, encryption, signature, and decryption time measured by `steady_clock` in this program.
+2. **Measured toy quantum simulator runtime**: elapsed milliseconds for the tiny 3-qubit Grover and `N=15` Shor demonstrations. These are not attacks on AES-128, RSA, P-256, or ML-KEM-768.
+3. **Estimated time to compromise (scenario model)**: a calculated time derived from the idealized Grover iteration count or modeled Shor Toffoli count under explicit assumed throughput (1 microsecond per ideal Grover oracle iteration and 1 microsecond per serial logical Toffoli gate). It is not measured attack time or a real-world forecast.
+
+For the P-256 and RSA sets, the report shows the fastest modeled compromise path and its scenario time. For ML-KEM-768, a whole-set break time is shown as `NOT ESTIMABLE` because this project does not model the Module-LWE attack cost; the AES Grover value remains a component-only estimate. The integrated report prints the three sets' estimated times separately and does not add them into a misleading single number.
 
 ### Quantum attack/resource reporting
 
@@ -290,3 +301,36 @@ The RSA and P-256 arithmetic is variable-time and has not been independently aud
 AES-GCM, SHA-256, RSA, and P-256 code is provided for algorithm study, not production deployment.
 Use a vetted cryptographic library for real data. All program output, log messages, source comments,
 and test messages are written in English.
+
+## Educational cryptosystem set analysis (2.3.2)
+
+The Educational Mode contains two separate analysis modules mirroring the standard set-analysis layout:
+
+- `EducationalCryptoSetAnalysis/`: independently runs three deliberately tiny teaching analogues: AES-SHA-ECDSA (toy ECC scalar search + restricted AES keyspace), AES-SHA-RSAPSS (toy RSA factorization + restricted AES keyspace), and SHA-AES-MLKEM (toy Module-LWE secret recovery + restricted AES keyspace). It reports measured sample-generation time, measured classical toy-attack runtime, candidate counts, and measured tiny Grover/Shor state-vector simulator runtime.
+- `IntegratedEducationalCryptoAnalysis/`: runs all three toy sets in one batch and aggregates their measured generation and toy-attack times. It does not merge the cryptosystems.
+
+Menu: `3. CryptoSystem` -> `2. Educational Mode` -> `6. Educational CryptoSetAnalysis` or `7. Integrated Educational Crypto Analysis`.
+
+All educational parameters are intentionally tiny and insecure. The ECC toy is not ECDSA/P-256, toy RSA is not RSA-PSS/RSA-2048, and toy Module-LWE is not ML-KEM-768. Measured brute-force times apply only to the tiny generated instances. Grover/Shor simulator milliseconds are classical simulation runtimes for toy circuits, not quantum attack runtimes. The illustrative AES-128 Grover figure assumes one microsecond per ideal oracle iteration and excludes oracle circuit cost, error correction, fault tolerance, and hardware overhead. Full-size Shor and Module-LWE compromise times are not estimated by these educational modules.
+
+
+## Toy SHA collision-search backend comparison (2.3.2)
+
+Each educational cryptosystem set now performs the same Toy SHA experiment: the standard SHA-256 calculation is retained, but only the leading 16 digest bits are exposed. The benchmark searches for an actual collision in this truncated output, rather than merely hashing unrelated messages.
+
+The report compares sequential single-CPU search, multi-threaded CPU search, and CUDA GPU batch hashing with host-side collision detection. Results include elapsed time, attempts, both colliding inputs, the truncated digest, and collision verification. GPU is `UNAVAILABLE` if CUDA execution cannot be used; it is never replaced with an unrelated CPU benchmark and mislabeled as GPU.
+
+Toy SHA collision search is included in each of the three independent educational set analyses and integrated analysis. The sets remain separate and are not merged into a hybrid cipher. A 16-bit truncated digest is intentionally insecure and does not estimate attacks against full SHA-256.
+
+
+## Educational message-bound SHA integration (2.3.4)
+
+The custom-message simulation now binds the 16-bit truncated SHA-256 digest of the entered UTF-8 message into each independent educational set, in addition to using it as AES-GCM AAD:
+
+- **Toy AES-SHA-ECDSA analogue:** the digest determines a small ECC challenge; after the toy ECC scalar-recovery exercise, the recovered scalar is checked against the digest-bound challenge response. This is not an ECDSA signature implementation.
+- **Toy AES-SHA-RSAPSS analogue:** the digest determines a small RSA message representative; the toy RSA factorization result is used to recover and verify that representative. This is not RSA-PSS.
+- **Toy SHA-AES-MLKEM analogue:** the plaintext digest and toy Module-LWE secret coefficients are passed through the truncated SHA-256 function to derive and compare sender/receiver teaching shared-key values. This is not standardized ML-KEM.
+
+The custom-message mode also performs restricted-keyspace AES-GCM encryption, key search, decryption, and exact plaintext comparison independently for all three sets. Collision-search benchmarking remains a separate experiment.
+
+**Limitations:** Toy SHA outputs only 16 bits; the AES-GCM primitive is standard AES-128-GCM but its unknown keyspace is reduced to 12 bits; ECC, RSA, and Module-LWE remain deliberately tiny educational analogues. The SHA-derived ECC response, RSA representative, and Module-LWE KDF are teaching constructions, not standardized ECDSA, RSA-PSS, or ML-KEM protocols.

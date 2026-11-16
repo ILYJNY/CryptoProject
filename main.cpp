@@ -9,6 +9,8 @@
 #include "CryptoSystem/Standard/StandardCrypto.h"
 #include "CryptoSetAnalysis/CryptoSetAnalysis.h"
 #include "IntegratedCryptoAnalysis/IntegratedCryptoAnalysis.h"
+#include "EducationalCryptoSetAnalysis/EducationalCryptoSetAnalysis.h"
+#include "IntegratedEducationalCryptoAnalysis/IntegratedEducationalCryptoAnalysis.h"
 #include "IntegratedMode/IntegratedRunner.h"
 #include "Benchmark/BenchmarkRunner.h"
 #include "ComputeEngine/ComputeEngine.h"
@@ -143,8 +145,10 @@ namespace
                   << "3. Generate a toy Module-LWE instance\n"
                   << "4. Find a truncated SHA-256 collision\n"
                   << "5. Generate a restricted-keyspace AES-GCM instance\n"
+                  << "6. Educational CryptoSetAnalysis (three separate toy sets)\n"
+                  << "7. Integrated Educational Crypto Analysis (all toy sets together)\n"
                   << "0. Back\n";
-        switch (read_choice(0, 5))
+        switch (read_choice(0, 7))
         {
         case 1:
         {
@@ -194,6 +198,35 @@ namespace
                       << "Unknown key bits: " << sample.public_instance.unknown_bits << '\n'
                       << "This reduced keyspace is not representative of AES-128 security.\n";
             (void)sample;
+            break;
+        }
+        case 6:
+        {
+            using namespace crypto::educational_set_analysis;
+            std::cout << "\n========== Educational CryptoSetAnalysis ==========" << '\n'
+                      << "1. Toy AES-SHA-ECDSA analogue\n"
+                      << "2. Toy AES-SHA-RSAPSS analogue\n"
+                      << "3. Toy SHA-AES-MLKEM analogue\n"
+                      << "4. Compare all three toy sets\n"
+                      << "5. Enter plaintext and run toy encryption / key-recovery simulation\n0. Back\n";
+            switch (read_choice(0, 5))
+            {
+            case 1: { auto r=run_toy_aes_sha_ecdsa(); std::cout << format_set(r); break; }
+            case 2: { auto r=run_toy_aes_sha_rsapss(); std::cout << format_set(r); break; }
+            case 3: { auto r=run_toy_sha_aes_mlkem(); std::cout << format_set(r); break; }
+            case 4: { auto v=run_all_toy_sets(); std::cout << format_comparison(v); std::string a,b; if(export_results(v,"Output/EducationalCryptoSetAnalysis",a,b)) std::cout << "\nReport: "<<a<<"\nCSV: "<<b<<'\n'; break; }
+            case 5: { const std::string plaintext = read_message(); std::cout << run_custom_message_simulation(plaintext); break; }
+            default: break;
+            }
+            break;
+        }
+        case 7:
+        {
+            const auto r=crypto::integrated_educational::run();
+            std::cout << r.report;
+            std::string a,b;
+            if(crypto::integrated_educational::export_result(r,"Output/IntegratedEducationalCryptoAnalysis",a,b))
+                std::cout << "Report: "<<a<<"\nCSV: "<<b<<'\n';
             break;
         }
         default:

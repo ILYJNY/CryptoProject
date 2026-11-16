@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.27)
 
-project(CryptoProject VERSION 2.2.0 DESCRIPTION "Educational cryptography system and analyzer" LANGUAGES CXX)
+project(CryptoProject VERSION 2.3.4 DESCRIPTION "Educational cryptography system and analyzer" LANGUAGES CXX)
 
 option(CRYPTO_ENABLE_CUDA "Enable CUDA when a compatible toolkit is found" ON)
 option(CRYPTO_REQUIRE_CUDA "Fail if CUDA is unavailable" OFF)
@@ -240,6 +240,20 @@ target_include_directories(crypto_integrated_crypto_analysis PUBLIC
 target_link_libraries(crypto_integrated_crypto_analysis PUBLIC crypto_set_analysis)
 crypto_apply_compiler_options(crypto_integrated_crypto_analysis)
 
+# Educational analogues of the three independent cryptosystem sets and their batch analysis.
+add_library(crypto_educational_set_analysis STATIC
+        EducationalCryptoSetAnalysis/EducationalCryptoSetAnalysis.cpp)
+target_include_directories(crypto_educational_set_analysis PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(crypto_educational_set_analysis PUBLIC
+        crypto_system_educational crypto_analyzer_educational crypto_quantum crypto_compute_engine)
+crypto_apply_compiler_options(crypto_educational_set_analysis)
+
+add_library(crypto_integrated_educational_analysis STATIC
+        IntegratedEducationalCryptoAnalysis/IntegratedEducationalCryptoAnalysis.cpp)
+target_include_directories(crypto_integrated_educational_analysis PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(crypto_integrated_educational_analysis PUBLIC crypto_educational_set_analysis)
+crypto_apply_compiler_options(crypto_integrated_educational_analysis)
+
 add_library(crypto_benchmark STATIC
         Benchmark/BenchmarkRunner.cpp)
 target_include_directories(crypto_benchmark PUBLIC
@@ -260,6 +274,8 @@ target_link_libraries(CryptoProject PRIVATE
         crypto_quantum
         crypto_set_analysis
         crypto_integrated_crypto_analysis
+        crypto_educational_set_analysis
+        crypto_integrated_educational_analysis
         crypto_benchmark
 )
 crypto_apply_compiler_options(CryptoProject)

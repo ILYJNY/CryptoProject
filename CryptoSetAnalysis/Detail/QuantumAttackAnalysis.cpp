@@ -1,4 +1,5 @@
 #include "QuantumAttackAnalysis.h"
+#include "AttackTimeModel.h"
 
 #include "QuantumAttack/Standard/Algorithms/QuantumAlgorithms.h"
 #include "QuantumAttack/Standard/Models/QuantumResourceModel.h"
@@ -11,15 +12,17 @@ namespace crypto::set_analysis::detail
 {
     void attach_quantum_analysis(SetRunResult& result, const bool enabled)
     {
-        // Grover is only demonstrated on a tiny toy search register. The full AES-128
-        // estimate below is an ideal query-count model, not a simulated attack.
-        result.quantum.grover_ideal_iterations = (std::numbers::pi_v<long double> / 4.0L) * std::ldexp(1.0L, 64);
+        using namespace attack_time_model;
+
+        // Grover estimates use an explicit scenario rate. They are not hardware measurements.
+        result.quantum.grover_ideal_iterations =
+            (std::numbers::pi_v<long double> / 4.0L) * std::ldexp(1.0L, 64);
         result.quantum.grover_time_at_one_microsecond_seconds =
-            result.quantum.grover_ideal_iterations * 1.0e-6L;
+            result.quantum.grover_ideal_iterations * kSecondsPerGroverOracleIteration;
         result.quantum.sha256_preimage_grover_iterations =
             (std::numbers::pi_v<long double> / 4.0L) * std::ldexp(1.0L, 128);
         result.quantum.sha256_preimage_grover_time_at_one_microsecond_seconds =
-            result.quantum.sha256_preimage_grover_iterations * 1.0e-6L;
+            result.quantum.sha256_preimage_grover_iterations * kSecondsPerGroverOracleIteration;
 
         if (result.id == SetId::AesShaEcdsa)
         {
@@ -27,29 +30,61 @@ namespace crypto::set_analysis::detail
             result.quantum.shor_target = "P-256 elliptic-curve discrete logarithm (ECDH and ECDSA)";
             result.quantum.shor_register_qubits =
                 quantum::estimate_quantum_resources(quantum::CryptoTarget::ECC, 256U).estimated_register_qubits;
+            result.quantum.shor_toffoli_gates_estimate = estimate_ecc_shor_toffoli_gates(256U);
             result.quantum.qualification =
-                "Grover estimate concerns only the shared AES-128 key search. Shor applies to the P-256 ECDLP in principle. "
-                "The listed 769 qubits are a register-size illustration only; work ancillas, error correction and fault-tolerant overhead are excluded.";
+                "Shor's P-256 gate estimate uses the Roetteler et al. ECDLP Toffoli-count model. "
+                "The attack-time figure serializes the estimated Toffoli gates at the scenario rate; it is not a fault-tolerant hardware forecast.";
         }
         else if (result.id == SetId::AesShaRsaPss)
         {
             result.quantum.shor_applies_to_public_key_component = true;
-            result.quantum.shor_target = "RSA-" + std::to_string(result.public_key_parameter_bits) + " integer factorization (OAEP key transport and PSS signing key)";
+            result.quantum.shor_target = "RSA-" + std::to_string(result.public_key_parameter_bits) +
+                " integer factorization (OAEP key transport and PSS signing key)";
             result.quantum.shor_register_qubits =
-                quantum::estimate_quantum_resources(quantum::CryptoTarget::RSA, result.public_key_parameter_bits).estimated_register_qubits;
+                quantum::estimate_quantum_resources(quantum::CryptoTarget::RSA,
+                    result.public_key_parameter_bits).estimated_register_qubits;
+            result.quantum.shor_toffoli_gates_estimate =
+                estimate_rsa_shor_toffoli_gates(result.public_key_parameter_bits);
             result.quantum.qualification =
-                "Grover estimate concerns only the shared AES-128 key search. Shor applies to RSA factorization in principle. "
-                "The listed register count is a coarse register-size illustration, not a complete fault-tolerant circuit estimate.";
+                "Shor's RSA gate estimate uses an interpolation model for the Toffoli count. "
+                "The attack-time figure serializes the estimated Toffoli gates at the scenario rate; it is not a fault-tolerant hardware forecast.";
         }
         else
         {
             result.quantum.shor_applies_to_public_key_component = false;
-            result.quantum.shor_target = "Not directly applicable: ML-KEM-768 is based on Module-LWE, not factoring or discrete logarithms";
+            result.quantum.shor_target =
+                "Not directly applicable: ML-KEM-768 is based on Module-LWE, not factoring or discrete logarithms";
             result.quantum.shor_register_qubits = 0U;
+            result.quantum.shor_toffoli_gates_estimate = 0.0L;
             result.quantum.qualification =
-                "Grover estimate concerns only the AES-128 symmetric layer. The project's simple Grover model does not quantify attacks on Module-LWE; "
-                "Shor's factoring/discrete-log algorithm is not a direct attack on ML-KEM-768. No ML-KEM break is claimed.";
+                "The Module-LWE attack cost is not modeled by this project. The displayed AES/SHA Grover figures concern only the symmetric/hash components "
+                "and cannot be interpreted as the time to break ML-KEM-768 itself.";
         }
+
+        if (result.quantum.shor_applies_to_public_key_component)
+        {
+            result.quantum.shor_attack_time_at_one_microsecond_per_toffoli_seconds =
+                result.quantum.shor_toffoli_gates_estimate * kSecondsPerSerialToffoliGate;
+        }
+
+        // Fastest *quantified direct component path*. For ML-KEM this deliberately excludes
+        // the Module-LWE core, so it is not a whole-set break-time estimate.
+        result.quantum.fastest_quantified_attack = "Grover on AES-128 key";
+        result.quantum.fastest_quantified_attack_seconds =
+            result.quantum.grover_time_at_one_microsecond_seconds;
+        if (result.quantum.shor_applies_to_public_key_component &&
+            result.quantum.shor_attack_time_at_one_microsecond_per_toffoli_seconds <
+                result.quantum.fastest_quantified_attack_seconds)
+        {
+            result.quantum.fastest_quantified_attack = "Shor on public-key component";
+            result.quantum.fastest_quantified_attack_seconds =
+                result.quantum.shor_attack_time_at_one_microsecond_per_toffoli_seconds;
+        }
+        result.quantum.fastest_quantified_attack_is_complete_for_set =
+            result.id != SetId::ShaAesMlKem;
+        result.quantum.attack_time_scope = result.id == SetId::ShaAesMlKem
+            ? "Component-only estimate; the Module-LWE core attack time is not modeled, so no complete ML-KEM set break time is claimed."
+            : "Fastest among the modeled AES-128 Grover and public-key Shor component paths under the stated scenario rates.";
 
         if (!enabled) return;
 

@@ -30,3 +30,12 @@
 - Added a true polynomial-ring toy Module-LWE teaching model over `Z_257[x]/(x^4+1)` with rank 2.
 - Added/retained CUDA vector-add, short-message SHA-256 batch, and selected quantum state-vector kernels.
 - Expanded the theoretical review and capability/verification status documentation.
+
+## 2.2.1
+
+- Made the estimated time-to-compromise figure explicit and prominent in individual set output, three-set comparison output, and integrated analysis output.
+- Clearly separated measured cryptosystem operation time, measured tiny Grover/Shor simulator runtime, and scenario-estimated full-parameter attack time.
+- Added an explicit CSV metric for estimated time to compromise each modeled set.
+- ML-KEM-768 whole-set break time is displayed as NOT ESTIMABLE while its Module-LWE attack cost remains unmodeled; AES-only Grover is labeled component-only.
+- Clarified that the three separate set estimates are shown individually and are not summed into a misleading single elapsed time.
+- CPU build and CTest verification recorded separately from Windows/MSVC/CUDA target-platform verification.

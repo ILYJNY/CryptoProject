@@ -1,4 +1,5 @@
 #include "IntegratedCryptoAnalysis.h"
+#include "CryptoSetAnalysis/Detail/AttackTimeModel.h"
 
 #include <chrono>
 #include <filesystem>
@@ -12,11 +13,6 @@ namespace crypto::integrated_crypto_analysis
     namespace
     {
         using Clock = std::chrono::steady_clock;
-
-        [[nodiscard]] long double grover_years(const long double seconds)
-        {
-            return seconds / (365.25L * 24.0L * 60.0L * 60.0L);
-        }
 
         [[nodiscard]] std::string csv_escape(const std::string& value)
         {
@@ -77,13 +73,13 @@ namespace crypto::integrated_crypto_analysis
                 << "Grover iterations summed across three independent AES keys: "
                 << r.total_grover_iterations_for_three_aes_keys << '\n'
                 << std::fixed << std::setprecision(2)
-                << "Illustrative sequential time at 1 microsecond per logical iteration: "
-                << grover_years(r.illustrative_grover_seconds_at_one_microsecond) << " years\n"
-                << "This 1-microsecond iteration duration is an explicit assumption, not a hardware measurement.\n"
+                << "Illustrative sequential AES Grover time for three independent keys (1 us / oracle iteration): "
+                << set_analysis::detail::attack_time_model::format_duration(r.illustrative_grover_seconds_at_one_microsecond) << '\n'
+                << "This is a scenario assumption, not a hardware measurement.\n"
                 << "SHA-256 preimage Grover iterations summed across three independent 256-bit hashes: "
                 << r.total_sha256_preimage_grover_iterations << '\n'
-                << "Illustrative sequential SHA-256 preimage search time at 1 microsecond per iteration: "
-                << grover_years(r.illustrative_sha256_grover_seconds_at_one_microsecond) << " years\n\n"
+                << "Illustrative sequential SHA-256 preimage time (1 us / iteration): "
+                << set_analysis::detail::attack_time_model::format_duration(r.illustrative_sha256_grover_seconds_at_one_microsecond) << "\n\n"
                 << "Shor applicability: " << r.shor_applicable_sets << " of 3 sets\n"
                 << "Sum of the two separate Shor register illustrations: " << r.sum_of_shor_register_qubits << " qubits\n"
                 << "Peak single Shor register illustration (if hardware is reused sequentially): "
@@ -96,12 +92,66 @@ namespace crypto::integrated_crypto_analysis
                     << "; toy Shor status=" << set.quantum.shor_toy_status << '\n';
             }
 
+            out << "\n[MEASURED TOY QUANTUM SIMULATOR RUNTIMES - NOT REAL ATTACK TIMES]\n";
+            for (const auto& set : r.sets)
+            {
+                out << "- " << set.name
+                    << ": Grover toy=" << std::fixed << std::setprecision(3) << set.quantum.grover_toy_simulator_ms << " ms"
+                    << "; Shor N=15 toy=" << set.quantum.shor_toy_simulator_ms << " ms\n";
+            }
+
+            out << "\n[ESTIMATED TIME TO COMPROMISE EACH CRYPTO SET]\n"
+                << "This is the separate estimated time-to-break output requested for each set.\n"
+                << "It is a scenario calculation, NOT measured wall-clock attack time.\n"
+                << "Assumptions: 1 us per ideal Grover oracle iteration; 1 us per serial logical Toffoli gate.\n";
+            for (const auto& set : r.sets)
+            {
+                out << "- " << set.name << '\n'
+                    << "    AES-128 Grover time: "
+                    << set_analysis::detail::attack_time_model::format_duration(set.quantum.grover_time_at_one_microsecond_seconds) << '\n'
+                    << "    SHA-256 preimage Grover time: "
+                    << set_analysis::detail::attack_time_model::format_duration(set.quantum.sha256_preimage_grover_time_at_one_microsecond_seconds) << '\n';
+                if (set.quantum.shor_applies_to_public_key_component)
+                {
+                    out << "    Shor target: " << set.quantum.shor_target << '\n'
+                        << "    Shor estimated Toffoli gates: " << std::scientific
+                        << set.quantum.shor_toffoli_gates_estimate << '\n'
+                        << "    Shor serial-equivalent attack time: "
+                        << set_analysis::detail::attack_time_model::format_duration(
+                            set.quantum.shor_attack_time_at_one_microsecond_per_toffoli_seconds) << '\n';
+                }
+                else
+                {
+                    out << "    Shor: not directly applicable to Module-LWE\n"
+                        << "    ML-KEM-768 Module-LWE attack time: NOT MODELED\n";
+                }
+                out << "    Fastest modeled component path: " << set.quantum.fastest_quantified_attack
+                    << " / " << set_analysis::detail::attack_time_model::format_duration(set.quantum.fastest_quantified_attack_seconds) << '\n';
+                if (set.quantum.fastest_quantified_attack_is_complete_for_set)
+                {
+                    out << "    >>> ESTIMATED TIME TO COMPROMISE THIS SET: "
+                        << set_analysis::detail::attack_time_model::format_duration(set.quantum.fastest_quantified_attack_seconds)
+                        << " <<<\n";
+                }
+                else
+                {
+                    out << "    >>> WHOLE-SET COMPROMISE TIME: NOT ESTIMABLE (Module-LWE core not modeled) <<<\n"
+                        << "    AES-only component estimate: "
+                        << set_analysis::detail::attack_time_model::format_duration(set.quantum.grover_time_at_one_microsecond_seconds) << '\n';
+                }
+            }
+            out << "\n[Integrated attack-time summary]\n"
+                << "The three sets retain separate break-time estimates; they are not added into one artificial total.\n"
+                << "All-three-sets completion time: NOT ESTIMABLE because the Module-LWE attack cost is not modeled.\n";
+
             out << "\n[Interpretation and limitations]\n"
                 << "1. AES-128 is the symmetric layer in all three sets; Grover's generic search model gives approximately sqrt(2^128) oracle iterations.\n"
                 << "2. Shor applies in principle to P-256 discrete logarithms and RSA factorization. The qubit figures here are coarse register-size illustrations only.\n"
                 << "3. Shor is not a direct algorithmic break of ML-KEM's Module-LWE problem. The project does not fabricate an ML-KEM Shor/Grover resource estimate.\n"
                 << "4. Toy Grover and Shor simulator times are classical state-vector simulation times on tiny examples, not elapsed time to break real AES, RSA, ECC or ML-KEM.\n"
-                << "5. The measured cryptographic operation times are measurements of this educational implementation on the current CPU build, not standardized performance claims.\n";
+                << "5. Attack-time scenarios convert ideal Grover query counts and published Shor Toffoli-count models using explicit assumed rates; they omit parallel depth, error correction, fault tolerance, routing and physical hardware overhead.\n"
+                << "6. The ML-KEM Module-LWE attack time is deliberately not estimated; therefore no all-three-set total break time is claimed.\n"
+                << "7. The measured cryptographic operation times are measurements of this educational implementation on the current CPU build, not standardized performance claims.\n";
             return out.str();
         }
     }
@@ -171,11 +221,32 @@ namespace crypto::integrated_crypto_analysis
                 << result.illustrative_sha256_grover_seconds_at_one_microsecond << ",seconds\n"
                 << "sum_of_shor_register_qubits," << result.sum_of_shor_register_qubits << ",logical_register_qubits\n"
                 << "peak_shor_register_qubits," << result.peak_shor_register_qubits << ",logical_register_qubits\n"
-                << "shor_applicable_sets," << result.shor_applicable_sets << ",sets\n";
+                << "shor_applicable_sets," << result.shor_applicable_sets << ",sets\n"
+                << "assumed_seconds_per_grover_oracle_iteration,1e-6,seconds\n"
+                << "assumed_seconds_per_serial_toffoli_gate,1e-6,seconds\n"
+                << "combined_all_three_set_break_time,NOT_CALCULATED_ModuleLWE_unmodeled,text\n";
             for (const auto& set : result.sets)
             {
-                csv << csv_escape(set.name) << "_total_ms," << set.timings.total_ms << ",ms\n"
-                    << csv_escape(set.name) << "_shor_register_qubits," << set.quantum.shor_register_qubits << ",logical_register_qubits\n";
+                csv << csv_escape(set.name + "_total_ms") << ',' << set.timings.total_ms << ",ms\n"
+                    << csv_escape(set.name + "_shor_register_qubits") << ',' << set.quantum.shor_register_qubits << ",logical_register_qubits\n"
+                    << csv_escape(set.name + "_grover_aes_attack_time") << ',' << std::scientific
+                    << set.quantum.grover_time_at_one_microsecond_seconds << ",seconds\n"
+                    << csv_escape(set.name + "_grover_sha256_preimage_attack_time") << ','
+                    << set.quantum.sha256_preimage_grover_time_at_one_microsecond_seconds << ",seconds\n"
+                    << csv_escape(set.name + "_shor_toffoli_gate_estimate") << ',' << set.quantum.shor_toffoli_gates_estimate << ",gates\n"
+                    << csv_escape(set.name + "_shor_attack_time_at_1us_per_toffoli") << ','
+                    << set.quantum.shor_attack_time_at_one_microsecond_per_toffoli_seconds << ",seconds\n"
+                    << csv_escape(set.name + "_fastest_quantified_attack") << ','
+                    << csv_escape(set.quantum.fastest_quantified_attack) << ",label\n"
+                    << csv_escape(set.name + "_fastest_quantified_attack_time") << ','
+                    << set.quantum.fastest_quantified_attack_seconds << ",seconds\n"
+                    << csv_escape(set.name + "_whole_set_attack_time_complete") << ','
+                    << (set.quantum.fastest_quantified_attack_is_complete_for_set ? "true" : "false") << ",boolean\n"
+                    << csv_escape(set.name + "_estimated_time_to_compromise_seconds") << ','
+                    << (set.quantum.fastest_quantified_attack_is_complete_for_set
+                        ? std::to_string(static_cast<double>(set.quantum.fastest_quantified_attack_seconds))
+                        : "NOT_ESTIMABLE_ModuleLWE_unmodeled") << ','
+                    << (set.quantum.fastest_quantified_attack_is_complete_for_set ? "seconds" : "text") << '\n';
             }
             write_file(csv_path, csv.str());
             return true;
