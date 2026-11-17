@@ -766,8 +766,10 @@ namespace
     void test_educate_analysis_mode()
     {
         EducateAnalysisConfig config;
-        config.primary_execution.backend = crypto::quantum::QuantumBackendType::CpuMultiThread;
-        config.primary_execution.cpu_threads = 2U;
+        // Opt into a CUDA backend so the GPU-parallel timing row is exercised. The real crack
+        // still runs on the CPU, and with no GPU in the test environment the GPU row reports
+        // UNAVAILABLE (never silently run on the CPU).
+        config.primary_execution.backend = crypto::quantum::QuantumBackendType::CudaMultiGpu;
         config.seed = 99U;
         config.rsa_modulus_bits = 16U;
         config.measure_gpu = true;
@@ -806,6 +808,8 @@ namespace
                         "Both CPU methods must be timed.");
                 const BackendTiming& gpu = component.timings[2];
                 require(gpu.method == "GPU parallel", "The third method is GPU parallel.");
+                // This config opted into a CUDA backend; with no GPU in the test environment the
+                // GPU row must report UNAVAILABLE and must never be silently run on the CPU.
                 if (!crypto::quantum::cuda_backend::CUDAQuantumBackend::is_available())
                     require(!gpu.executed && contains(gpu.note, "UNAVAILABLE"),
                             "Without a GPU backend, the GPU row must say UNAVAILABLE and must not run on the CPU.");

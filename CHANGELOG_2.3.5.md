@@ -87,6 +87,18 @@ simulator, and an interactive mode that drives them end to end.
   was printed, which landed under the launch directory - e.g. an IDE build folder - and looked
   "missing").
 
+## Fixed
+
+- Crash (access violation, 0xC0000005) when EducateAnalysis was run with the CUDA multi-GPU
+  backend on a machine with fewer than two usable GPUs. The distributed backend assumes a
+  power-of-two device set of at least two devices; auto-selecting a single device faulted.
+  Backend resolution now treats multi-GPU as available only with two or more devices and
+  otherwise falls back to the single-GPU backend (or CPU), never to the faulting path.
+- To keep the recovery reliable, the EducateAnalysis **real crack now always runs on a CPU
+  backend** (the project's CUDA paths are unverified on hardware). A CUDA selection is used only
+  for the opt-in GPU-parallel timing row; the GPU is never exercised unless a CUDA backend is
+  explicitly chosen, and a GPU run is never silently replaced by a CPU run.
+
 ## Not implemented in this release
 
 - In the `EducationalQuantumAttack` RESOURCE-ANALYSIS view (menu 9), Toy ECC and Toy RSA remain

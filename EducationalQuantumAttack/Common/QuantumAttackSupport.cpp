@@ -404,9 +404,45 @@ namespace crypto::educational_quantum_attack
         if (!single_gpu && !multi_gpu) return resolved;
 
         resolved.gpu_requested = true;
-        const bool available = single_gpu
-            ? quantum::cuda_backend::CUDAQuantumBackend::is_available()
-            : quantum::cuda_backend::CUDAMultiGpuQuantumBackend::is_available();
+
+        // Count usable CUDA devices so a multi-GPU request can be refused safely when the
+        // machine has fewer than two GPUs. The distributed backend shards the state across a
+        // power-of-two device set and assumes at least two devices; auto-selecting a single
+        // device has been observed to fault, so it is never used with one GPU.
+        std::size_t device_count = 0U;
+        if (quantum::cuda_backend::CUDAMultiGpuQuantumBackend::is_available())
+        {
+            try { device_count = quantum::cuda_backend::CUDAMultiGpuQuantumBackend::available_devices().size(); }
+            catch (const std::exception&) { device_count = 0U; }
+        }
+        const bool single_available = quantum::cuda_backend::CUDAQuantumBackend::is_available();
+
+        bool available = false;
+        if (single_gpu)
+        {
+            available = single_available;
+        }
+        else // multi_gpu
+        {
+            if (device_count >= 2U)
+            {
+                available = true;        // genuine multi-GPU
+            }
+            else if (single_available)
+            {
+                // One GPU only: fall back to the single-GPU backend rather than fault the
+                // distributed one. This is still a real GPU execution, honestly relabeled.
+                resolved.options.backend = quantum::QuantumBackendType::CudaGpu;
+                resolved.options.gpu_devices.clear();
+                resolved.used = backend_label(resolved.options.backend);
+                resolved.gpu_available = true;
+                resolved.gpu_status =
+                    "Multi-GPU requested but only one usable CUDA device is present; executed on the "
+                    "single-GPU backend (not substituted with CPU).";
+                available = true;
+            }
+        }
+
         if (!available)
         {
             // Never present a CPU run as a GPU run: switch the backend and say so.
@@ -414,18 +450,21 @@ namespace crypto::educational_quantum_attack
             resolved.used = backend_label(resolved.options.backend);
             resolved.gpu_available = false;
             resolved.gpu_status = ComputeEngine::cuda_compiled()
-                ? "UNAVAILABLE (no usable CUDA device for the requested backend); executed on " + resolved.used
+                ? "UNAVAILABLE (no usable CUDA device set for the requested backend); executed on " + resolved.used
                 : "UNAVAILABLE (project built without CUDA); executed on " + resolved.used;
             return resolved;
         }
 
         resolved.gpu_available = true;
-        resolved.gpu_status = "AVAILABLE";
+        // Keep the single-GPU-fallback explanation if it was already set above.
+        if (resolved.gpu_status.empty() || resolved.gpu_status == resolved.requested)
+            resolved.gpu_status = "AVAILABLE";
+        const bool report_single = resolved.options.backend == quantum::QuantumBackendType::CudaGpu;
         try
         {
             const auto devices = ComputeEngine::discover_gpus();
             std::ostringstream names;
-            if (single_gpu)
+            if (report_single)
             {
                 for (const auto& device : devices)
                 {

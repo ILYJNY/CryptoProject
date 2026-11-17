@@ -88,8 +88,11 @@ namespace crypto::educational_quantum_attack
 
         // Runs one decisive attack circuit on each execution method and times it. `runner`
         // executes one circuit on the given options and returns the simulator wall time in ms.
+        // `gpu_request` is the GPU backend the user opted into (CudaGpu or CudaMultiGpu); any
+        // CPU value means "GPU timing not requested" and the GPU row is only a detection note.
         [[nodiscard]] std::vector<BackendTiming> measure_backends(
-            bool include_gpu, const std::function<double(const quantum::QuantumExecutionOptions&)>& runner)
+            bool include_gpu, Backend gpu_request,
+            const std::function<double(const quantum::QuantumExecutionOptions&)>& runner)
         {
             std::vector<BackendTiming> timings;
 
@@ -125,32 +128,68 @@ namespace crypto::educational_quantum_attack
             {
                 BackendTiming gpu;
                 gpu.method = "GPU parallel";
-                const bool gpu_available = quantum::cuda_backend::CUDAQuantumBackend::is_available();
-                gpu.available = gpu_available;
-                if (gpu_available)
+                const bool user_requested_gpu =
+                    gpu_request == Backend::CudaGpu || gpu_request == Backend::CudaMultiGpu;
+                if (!user_requested_gpu)
+                {
+                    // The user did not select a CUDA backend, so the GPU is not exercised. The
+                    // project's CUDA paths are unverified on hardware, so GPU timing is strictly
+                    // opt-in to keep the default run safe.
+                    gpu.available = quantum::cuda_backend::CUDAQuantumBackend::is_available();
+                    gpu.note = "not requested (choose a CUDA backend to measure the GPU; CPU is the safe default)";
+                    timings.push_back(std::move(gpu));
+                    return timings;
+                }
+
+                // Resolve the requested GPU backend safely: a multi-GPU request with fewer than
+                // two devices falls back to the single-GPU backend, never to a faulting path.
+                quantum::QuantumExecutionOptions requested;
+                requested.backend = gpu_request;
+                const ResolvedBackend resolved = resolve_backend(requested);
+                gpu.available = resolved.gpu_available;
+                if (resolved.gpu_available)
                 {
                     try
                     {
-                        quantum::QuantumExecutionOptions options;
-                        options.backend = Backend::CudaGpu;
-                        gpu.simulator_ms = runner(options);
+                        gpu.simulator_ms = runner(resolved.options);
                         gpu.executed = true;
+                        gpu.note = resolved.gpu_status == "AVAILABLE" ? std::string() : resolved.gpu_status;
                     }
                     catch (const std::exception& exception) { gpu.note = exception.what(); }
                 }
                 else
                 {
-                    gpu.note = "UNAVAILABLE (this build has no usable CUDA GPU backend); "
-                               "not run, not substituted with CPU";
+                    gpu.note = resolved.gpu_status;
                 }
                 timings.push_back(std::move(gpu));
             }
             return timings;
         }
 
+        // The real crack always runs on a CPU backend: the CUDA paths are unverified on hardware,
+        // so the recovery must never depend on them. A single-thread request stays single-thread;
+        // every other choice (including a CUDA selection) recovers on multithreaded CPU.
         [[nodiscard]] quantum::QuantumExecutionOptions primary(const EducateAnalysisConfig& config)
         {
-            return config.primary_execution;
+            quantum::QuantumExecutionOptions options;
+            if (config.primary_execution.backend == Backend::CpuSingleThread)
+            {
+                options.backend = Backend::CpuSingleThread;
+                options.cpu_threads = 1U;
+            }
+            else
+            {
+                options.backend = Backend::CpuMultiThread;
+                options.cpu_threads = config.primary_execution.cpu_threads;
+            }
+            return options;
+        }
+
+        // The GPU backend the user opted into for the timing comparison, if any.
+        [[nodiscard]] Backend requested_gpu_backend(const EducateAnalysisConfig& config)
+        {
+            const Backend chosen = config.primary_execution.backend;
+            return (chosen == Backend::CudaGpu || chosen == Backend::CudaMultiGpu) ? chosen : Backend::CpuMultiThread;
         }
 
         // ---- decisive single-circuit runners for the Grover components ------------------
@@ -244,7 +283,7 @@ namespace crypto::educational_quantum_attack
                         marked.push_back(candidate);
                 const auto verifier = [&instance](std::size_t candidate)
                 { return educational::toy_aes_candidate_matches(instance, static_cast<std::uint32_t>(candidate)); };
-                component.timings = measure_backends(config.measure_gpu,
+                component.timings = measure_backends(config.measure_gpu, requested_gpu_backend(config),
                     [&](const quantum::QuantumExecutionOptions& execution)
                     {
                         return time_grover_circuit(bits, marked, verifier,
@@ -308,7 +347,7 @@ namespace crypto::educational_quantum_attack
                         educational::toy_sha_family_message(family, static_cast<std::uint64_t>(counter)), sha_bits) == digest;
                 };
                 const double assumed = marked.empty() ? 1.0 : static_cast<double>(marked.size());
-                component.timings = measure_backends(config.measure_gpu,
+                component.timings = measure_backends(config.measure_gpu, requested_gpu_backend(config),
                     [&](const quantum::QuantumExecutionOptions& execution)
                     {
                         return time_grover_circuit(search_qubits, marked, verifier, assumed, execution,
@@ -371,7 +410,7 @@ namespace crypto::educational_quantum_attack
 
             if (shor.executed)
             {
-                component.timings = measure_backends(config.measure_gpu,
+                component.timings = measure_backends(config.measure_gpu, requested_gpu_backend(config),
                     [&](const quantum::QuantumExecutionOptions& execution)
                     {
                         return run_shor_ecdlp_single_circuit(
@@ -425,7 +464,7 @@ namespace crypto::educational_quantum_attack
             if (shor.executed)
             {
                 const std::uint64_t base = shor.winning_base != 0U ? shor.winning_base : 2U;
-                component.timings = measure_backends(config.measure_gpu,
+                component.timings = measure_backends(config.measure_gpu, requested_gpu_backend(config),
                     [&](const quantum::QuantumExecutionOptions& execution)
                     {
                         return run_shor_factoring_single_circuit(
@@ -476,7 +515,7 @@ namespace crypto::educational_quantum_attack
 
             if (attack.executed)
             {
-                component.timings = measure_backends(config.measure_gpu,
+                component.timings = measure_backends(config.measure_gpu, requested_gpu_backend(config),
                     [&](const quantum::QuantumExecutionOptions& execution)
                     {
                         return run_toy_module_lwe_single_circuit(
