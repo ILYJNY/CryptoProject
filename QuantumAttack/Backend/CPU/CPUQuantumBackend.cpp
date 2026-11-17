@@ -257,4 +257,73 @@ namespace crypto::quantum::cpu
                 state[base | target_offsets[index]] = output[index];
         }, 1U);
     }
+
+    void CPUQuantumBackend::apply_phase_shift(
+        std::vector<Complex>& state,
+        const std::size_t target,
+        const double angle) const
+    {
+        validate_qubit(state, target);
+        const Complex factor{std::cos(angle), std::sin(angle)};
+        const std::size_t mask = std::size_t{1} << target;
+        pool_.parallel_for(0U, state.size() / 2U, [&](const std::size_t pair)
+        {
+            const std::size_t high = insert_zero_bit(pair, target) | mask;
+            state[high] *= factor;
+        }, 2048U);
+    }
+
+    double CPUQuantumBackend::probability_of_one(
+        const std::vector<Complex>& state,
+        const std::size_t target) const
+    {
+        validate_qubit(state, target);
+        constexpr std::size_t reduction_block_size = 4096U;
+        const std::size_t pair_count = state.size() / 2U;
+        const std::size_t block_count = (pair_count + reduction_block_size - 1U) / reduction_block_size;
+        const std::size_t mask = std::size_t{1} << target;
+        std::vector<double> partial_sums(block_count, 0.0);
+
+        pool_.parallel_for(0U, block_count, [&](const std::size_t block)
+        {
+            const std::size_t begin = block * reduction_block_size;
+            const std::size_t end = std::min(pair_count, begin + reduction_block_size);
+            double sum = 0.0;
+            for (std::size_t pair = begin; pair < end; ++pair)
+                sum += std::norm(state[insert_zero_bit(pair, target) | mask]);
+            partial_sums[block] = sum;
+        }, 1U);
+
+        double total = 0.0;
+        for (const double partial : partial_sums) total += partial;
+        return total;
+    }
+
+    void CPUQuantumBackend::collapse_qubit(
+        std::vector<Complex>& state,
+        const std::size_t target,
+        const bool outcome,
+        const double outcome_probability) const
+    {
+        validate_qubit(state, target);
+        if (!(outcome_probability > 0.0))
+            throw std::invalid_argument("A qubit cannot collapse onto an outcome that has zero probability.");
+        const double scale = 1.0 / std::sqrt(outcome_probability);
+        const std::size_t mask = std::size_t{1} << target;
+        pool_.parallel_for(0U, state.size() / 2U, [&](const std::size_t pair)
+        {
+            const std::size_t low = insert_zero_bit(pair, target);
+            const std::size_t high = low | mask;
+            if (outcome)
+            {
+                state[low] = Complex{};
+                state[high] *= scale;
+            }
+            else
+            {
+                state[high] = Complex{};
+                state[low] *= scale;
+            }
+        }, 2048U);
+    }
 }

@@ -8,9 +8,9 @@
     <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
     <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
   </component>
-  <component name="CMakePresetLoader"><![CDATA[{
-  "useNewFormat": true
-}]]></component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
   <component name="CMakeProjectFlavorService">
     <option name="flavorId" value="CMakePlainProjectFlavor" />
   </component>
@@ -19,27 +19,31 @@
   </component>
   <component name="CMakeRunConfigurationManager">
     <generated>
-      <config projectName="CryptoProject" targetName="crypto_integrated_educational_analysis" />
       <config projectName="CryptoProject" targetName="crypto_educational_set_analysis" />
       <config projectName="CryptoProject" targetName="EducationalCryptoSetAnalysisSmokeTests" />
-      <config projectName="CryptoProject" targetName="QuantumSmokeTests" />
       <config projectName="CryptoProject" targetName="crypto_compute_engine" />
-      <config projectName="CryptoProject" targetName="ComputeEngineSmokeTests" />
-      <config projectName="CryptoProject" targetName="crypto_analyzer_standard" />
+      <config projectName="CryptoProject" targetName="EducationalQuantumAttackTests" />
       <config projectName="CryptoProject" targetName="crypto_quantum" />
-      <config projectName="CryptoProject" targetName="crypto_system_educational" />
       <config projectName="CryptoProject" targetName="crypto_system_standard" />
       <config projectName="CryptoProject" targetName="crypto_integrated" />
       <config projectName="CryptoProject" targetName="crypto_common" />
-      <config projectName="CryptoProject" targetName="crypto_benchmark" />
       <config projectName="CryptoProject" targetName="MLKEM768SmokeTests" />
       <config projectName="CryptoProject" targetName="crypto_set_analysis" />
-      <config projectName="CryptoProject" targetName="crypto_analyzer_educational" />
       <config projectName="CryptoProject" targetName="crypto_integrated_crypto_analysis" />
-      <config projectName="CryptoProject" targetName="CommonSmokeTests" />
-      <config projectName="CryptoProject" targetName="CryptoSetAnalysisSmokeTests" />
       <config projectName="CryptoProject" targetName="CryptoProject" />
       <config projectName="CryptoProject" targetName="ProjectSmokeTests" />
+      <config projectName="CryptoProject" targetName="crypto_integrated_educational_analysis" />
+      <config projectName="CryptoProject" targetName="QuantumSmokeTests" />
+      <config projectName="CryptoProject" targetName="IntegratedEducationalQuantumAttackTests" />
+      <config projectName="CryptoProject" targetName="ComputeEngineSmokeTests" />
+      <config projectName="CryptoProject" targetName="crypto_analyzer_standard" />
+      <config projectName="CryptoProject" targetName="crypto_system_educational" />
+      <config projectName="CryptoProject" targetName="crypto_integrated_educational_quantum_attack" />
+      <config projectName="CryptoProject" targetName="crypto_educational_quantum_attack" />
+      <config projectName="CryptoProject" targetName="crypto_benchmark" />
+      <config projectName="CryptoProject" targetName="crypto_analyzer_educational" />
+      <config projectName="CryptoProject" targetName="CommonSmokeTests" />
+      <config projectName="CryptoProject" targetName="CryptoSetAnalysisSmokeTests" />
     </generated>
   </component>
   <component name="CMakeSettings">
@@ -59,21 +63,34 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c6cb648a-14b2-4d98-a65c-6ebe4394995b" name="변경" comment="2.3.4 UPDATE">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/CryptoProject.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/CryptoProject.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CryptoSetAnalysis/CryptoSetAnalysis.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/CryptoSetAnalysis/CryptoSetAnalysis.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CryptoSetAnalysis/CryptoSetAnalysis.h" beforeDir="false" afterPath="$PROJECT_DIR$/CryptoSetAnalysis/CryptoSetAnalysis.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CryptoSetAnalysis/Detail/QuantumAttackAnalysis.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/CryptoSetAnalysis/Detail/QuantumAttackAnalysis.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CryptoSystem/Educational/AES/ToyAESKeySearch.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/CryptoSystem/Educational/AES/ToyAESKeySearch.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CryptoSystem/Educational/AES/ToyAESKeySearch.h" beforeDir="false" afterPath="$PROJECT_DIR$/CryptoSystem/Educational/AES/ToyAESKeySearch.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IntegratedCryptoAnalysis/IntegratedCryptoAnalysis.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/IntegratedCryptoAnalysis/IntegratedCryptoAnalysis.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CryptoSystem/Educational/ECC/ToyECC.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/CryptoSystem/Educational/ECC/ToyECC.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CryptoSystem/Educational/ECC/ToyECC.h" beforeDir="false" afterPath="$PROJECT_DIR$/CryptoSystem/Educational/ECC/ToyECC.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CryptoSystem/Educational/ModuleLWE/ToyModuleLWE.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/CryptoSystem/Educational/ModuleLWE/ToyModuleLWE.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CryptoSystem/Educational/ModuleLWE/ToyModuleLWE.h" beforeDir="false" afterPath="$PROJECT_DIR$/CryptoSystem/Educational/ModuleLWE/ToyModuleLWE.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CryptoSystem/Educational/SHA/ToySha256.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/CryptoSystem/Educational/SHA/ToySha256.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CryptoSystem/Educational/SHA/ToySha256.h" beforeDir="false" afterPath="$PROJECT_DIR$/CryptoSystem/Educational/SHA/ToySha256.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EducationalCryptoSetAnalysis/EducationalCryptoSetAnalysis.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/EducationalCryptoSetAnalysis/EducationalCryptoSetAnalysis.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/QuantumAttack/Backend/CPU/CPUQuantumBackend.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/QuantumAttack/Backend/CPU/CPUQuantumBackend.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/QuantumAttack/Backend/CPU/CPUQuantumBackend.h" beforeDir="false" afterPath="$PROJECT_DIR$/QuantumAttack/Backend/CPU/CPUQuantumBackend.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/QuantumAttack/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/QuantumAttack/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/QuantumAttack/Standard/Core/QuantumSimulator.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/QuantumAttack/Standard/Core/QuantumSimulator.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/QuantumAttack/Standard/Core/QuantumSimulator.h" beforeDir="false" afterPath="$PROJECT_DIR$/QuantumAttack/Standard/Core/QuantumSimulator.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/QuantumAttack/Tests/QuantumAttackSmokeTests.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/QuantumAttack/Tests/QuantumAttackSmokeTests.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/QuantumAttack/VERSION.txt" beforeDir="false" afterPath="$PROJECT_DIR$/QuantumAttack/VERSION.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Tests/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tests/CryptoSetAnalysisSmokeTests.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/CryptoSetAnalysisSmokeTests.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tests/QuantumSmokeTests.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Tests/QuantumSmokeTests.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/VERSION.txt" beforeDir="false" afterPath="$PROJECT_DIR$/VERSION.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/ALGORITHM_STATUS.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/ALGORITHM_STATUS.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -85,25 +102,25 @@
     <option name="formatViaClangd" value="false" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="56601" />
+    <option name="cachedIndexableFilesCount" value="56641" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "ILYJNY"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;ILYJNY&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/ILYJNY/CryptoProject.git",
-    "accountId": "f0680fb7-6ba7-46fa-8b9f-4aaa982e3bb6"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/ILYJNY/CryptoProject.git&quot;,
+    &quot;accountId&quot;: &quot;f0680fb7-6ba7-46fa-8b9f-4aaa982e3bb6&quot;
   }
-}]]></component>
+}</component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="xmvLxXTU" />
   </component>
@@ -117,10 +134,10 @@
     <option name="minorVersion" value="1.1" />
     <option name="productBranch" value="Classic" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 1
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 1
+}</component>
   <component name="ProjectId" id="3MCQQGlpB3eHlC5aZKb0MLrZ0qV" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -128,11 +145,13 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "CMake 애플리케이션.CryptoProject.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.RadMigrateCodeStyle": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "RunOnceActivity.west.config.association.type.startup.service": "true",
@@ -151,10 +170,15 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\komaL\CLionProjects\CryptoProject\Output" />
+    </key>
+  </component>
   <component name="RunManager" selected="CMake 애플리케이션.CryptoProject">
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
       </method>
     </configuration>
     <configuration name="CommonSmokeTests" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="CommonSmokeTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="CryptoProject" RUN_TARGET_NAME="CommonSmokeTests">
@@ -178,6 +202,16 @@
       </method>
     </configuration>
     <configuration name="EducationalCryptoSetAnalysisSmokeTests" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="EducationalCryptoSetAnalysisSmokeTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="CryptoProject" RUN_TARGET_NAME="EducationalCryptoSetAnalysisSmokeTests">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="EducationalQuantumAttackTests" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="EducationalQuantumAttackTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="CryptoProject" RUN_TARGET_NAME="EducationalQuantumAttackTests">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="IntegratedEducationalQuantumAttackTests" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="IntegratedEducationalQuantumAttackTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="CryptoProject" RUN_TARGET_NAME="IntegratedEducationalQuantumAttackTests">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -222,6 +256,11 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration name="crypto_educational_quantum_attack" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="crypto_educational_quantum_attack" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="crypto_educational_set_analysis" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="crypto_educational_set_analysis" CONFIG_NAME="Debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -238,6 +277,11 @@
       </method>
     </configuration>
     <configuration name="crypto_integrated_educational_analysis" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="crypto_integrated_educational_analysis" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="crypto_integrated_educational_quantum_attack" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CryptoProject" TARGET_NAME="crypto_integrated_educational_quantum_attack" CONFIG_NAME="Debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -262,7 +306,7 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="모든 CTest" type="CTestRunConfiguration" factoryName="CTestRun" PROGRAM_PARAMS="--extra-verbose" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" WORKING_DIR="file://$CMakeCurrentLocalGenerationDir$" PASS_PARENT_ENVS_2="true" RUN_PATH="$CTestCurrentExecutableName$" EXPLICIT_BUILD_TARGET_NAME="all" TEST_MODE="SUITE_TEST">
+    <configuration name="모든 CTest" type="CTestRunConfiguration" factoryName="CTestRun" PROGRAM_PARAMS="--extra-verbose" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" WORKING_DIR="file://$CMakeCurrentLocalGenerationDir$" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" RUN_PATH="$CTestCurrentExecutableName$" EXPLICIT_BUILD_TARGET_NAME="all" TEST_MODE="SUITE_TEST">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
@@ -274,10 +318,12 @@
       <item itemvalue="CMake 애플리케이션.crypto_benchmark" />
       <item itemvalue="CMake 애플리케이션.crypto_common" />
       <item itemvalue="CMake 애플리케이션.crypto_compute_engine" />
+      <item itemvalue="CMake 애플리케이션.crypto_educational_quantum_attack" />
       <item itemvalue="CMake 애플리케이션.crypto_educational_set_analysis" />
       <item itemvalue="CMake 애플리케이션.crypto_integrated" />
       <item itemvalue="CMake 애플리케이션.crypto_integrated_crypto_analysis" />
       <item itemvalue="CMake 애플리케이션.crypto_integrated_educational_analysis" />
+      <item itemvalue="CMake 애플리케이션.crypto_integrated_educational_quantum_attack" />
       <item itemvalue="CMake 애플리케이션.crypto_quantum" />
       <item itemvalue="CMake 애플리케이션.crypto_set_analysis" />
       <item itemvalue="CMake 애플리케이션.crypto_system_educational" />
@@ -287,6 +333,8 @@
       <item itemvalue="CMake 애플리케이션.ComputeEngineSmokeTests" />
       <item itemvalue="CMake 애플리케이션.CryptoSetAnalysisSmokeTests" />
       <item itemvalue="CMake 애플리케이션.EducationalCryptoSetAnalysisSmokeTests" />
+      <item itemvalue="CMake 애플리케이션.EducationalQuantumAttackTests" />
+      <item itemvalue="CMake 애플리케이션.IntegratedEducationalQuantumAttackTests" />
       <item itemvalue="CMake 애플리케이션.MLKEM768SmokeTests" />
       <item itemvalue="CMake 애플리케이션.ProjectSmokeTests" />
       <item itemvalue="CMake 애플리케이션.QuantumSmokeTests" />
@@ -301,11 +349,18 @@
       <option name="presentableId" value="Default" />
       <updated>1794852054912</updated>
       <workItem from="1794852059410" duration="675000" />
+      <workItem from="1794915427556" duration="1946000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VCPKGProject">
+    <isAutomaticCheckingOnLaunch value="false" />
+    <isAutomaticFoundErrors value="true" />
+    <isAutomaticReloadCMake value="true" />
+    <isAutomaticBootstrapAfterUpdate value="false" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="2.3.4 UPDATE" />

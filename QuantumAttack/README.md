@@ -1,6 +1,6 @@
 # QuantumAttack
 
-Current revision: **2.5** (fused QFT CUDA stages, direct bit-reversal swaps, reusable/pinned transfer staging, and a dedicated backend benchmark runner). Module
+Current revision: **2.8** (2.8 adds a single-qubit phase shift and mid-circuit measurement; see `CHANGELOG_2.8.md`). Revision 2.5 summary: (fused QFT CUDA stages, direct bit-reversal swaps, reusable/pinned transfer staging, and a dedicated backend benchmark runner). Module
 
 QuantumAttack is a drop-in C++20 module for the CryptoProject. It contains the existing state-vector experiments plus selectable CPU and NVIDIA CUDA execution backends.
 
@@ -197,3 +197,16 @@ Outputs:
 - `Output/algorithm_benchmark_summary.csv` — derived speedup and measurement summary
 
 See `Docs/BENCHMARK_DASHBOARD.md` for options and interpretation notes. The report generator requires only Python 3 standard library modules. All times are classical state-vector simulation measurements, not quantum-hardware measurements.
+
+## Version 2.8: phase shift and mid-circuit measurement
+
+`QuantumSimulator` gained two operations:
+
+- `apply_phase_shift(target, angle)` applies `diag(1, e^{i*angle})` to one qubit.
+- `measure_qubit(target, uniform_sample)` measures one qubit in the Z basis in the middle of a
+  circuit, collapses the state onto the sampled outcome and renormalizes it. The caller owns the
+  random source and passes a uniform sample in `[0, 1)`.
+
+Mid-circuit measurements are counted by `measurement_count()`, separately from `gate_count()`.
+Both operations use the CPU reference path. With a CUDA backend selected they synchronize the state
+to host memory and are reported in `cpu_fallback_operations`; no CUDA kernel exists for them.

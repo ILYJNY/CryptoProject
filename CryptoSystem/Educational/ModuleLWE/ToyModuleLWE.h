@@ -45,4 +45,21 @@ namespace crypto::educational
 
     [[nodiscard]] ToyLweSample generate_toy_lwe_sample();
     [[nodiscard]] ToyLweAnalysis analyze_toy_lwe(const ToyLwePublicInstance& instance);
+
+    // ---------------------------------------------------------------------------------
+    // Candidate enumeration and the secret-verification predicate (exposed in 2.3.5).
+    // analyze_toy_lwe() enumerates exactly these candidates with exactly this predicate.
+    // ---------------------------------------------------------------------------------
+
+    // 3^(rank * degree) = 3^8 small-coefficient secret candidates.
+    inline constexpr std::uint64_t ToyModuleSecretCandidateCount = 6561ULL;
+
+    // Decodes a base-3 candidate index in [0, ToyModuleSecretCandidateCount) into a
+    // secret vector with coefficients in {-1, 0, 1} (least significant trit first).
+    [[nodiscard]] ToyModuleSmallVector decode_toy_lwe_candidate(std::uint64_t encoded);
+
+    // True when b - A*s has every centered coefficient in {-1, 0, 1}.
+    [[nodiscard]] bool toy_lwe_candidate_matches(
+        const ToyLwePublicInstance& instance,
+        const ToyModuleSmallVector& candidate);
 }

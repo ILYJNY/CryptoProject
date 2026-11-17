@@ -42,6 +42,36 @@ namespace crypto::educational
         return sample;
     }
 
+    standard::Aes128Key toy_aes_candidate_key(const std::uint32_t candidate, const std::size_t unknown_bits)
+    {
+        if (unknown_bits < 4U || unknown_bits > 16U)
+            throw std::invalid_argument("Toy AES unknown key size must be between 4 and 16 bits.");
+        if (candidate >= (std::uint32_t{1} << unknown_bits))
+            throw std::out_of_range("The toy AES candidate index is outside the restricted keyspace.");
+        standard::Aes128Key key{};
+        for (std::size_t bit = 0; bit < unknown_bits; ++bit)
+        {
+            if ((candidate & (std::uint32_t{1} << bit)) != 0U)
+                key[15U - bit / 8U] |= static_cast<std::uint8_t>(1U << (bit % 8U));
+        }
+        return key;
+    }
+
+    bool toy_aes_candidate_matches(const ToyAesPublicInstance& instance, const std::uint32_t candidate)
+    {
+        const standard::Aes128Key key = toy_aes_candidate_key(candidate, instance.unknown_bits);
+        try
+        {
+            (void)standard::AES128GCM::decrypt(key, instance.ciphertext, instance.associated_data);
+            return true;
+        }
+        catch (const std::exception&)
+        {
+            // An authentication failure means this trial key did not match the generated record.
+            return false;
+        }
+    }
+
     ToyAesAnalysis analyze_toy_aes(const ToyAesPublicInstance& instance)
     {
         ToyAesAnalysis result;

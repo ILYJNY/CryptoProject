@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.27)
 
-project(CryptoProject VERSION 2.3.4 DESCRIPTION "Educational cryptography system and analyzer" LANGUAGES CXX)
+project(CryptoProject VERSION 2.3.5 DESCRIPTION "Educational cryptography system and analyzer" LANGUAGES CXX)
 
 option(CRYPTO_ENABLE_CUDA "Enable CUDA when a compatible toolkit is found" ON)
 option(CRYPTO_REQUIRE_CUDA "Fail if CUDA is unavailable" OFF)
@@ -254,6 +254,51 @@ target_include_directories(crypto_integrated_educational_analysis PUBLIC "${CMAK
 target_link_libraries(crypto_integrated_educational_analysis PUBLIC crypto_educational_set_analysis)
 crypto_apply_compiler_options(crypto_integrated_educational_analysis)
 
+# Independent quantum-attack analysis of the three educational sets (2.3.5). This is a
+# separate module from crypto_educational_set_analysis: it reuses the QuantumAttack
+# state-vector simulator as its engine and attacks the real toy parameters.
+add_library(crypto_educational_quantum_attack STATIC
+        EducationalQuantumAttack/EducationalQuantumAttack.cpp
+        EducationalQuantumAttack/MessageCrack.cpp
+        EducationalQuantumAttack/EducateAnalysis.cpp
+        EducationalQuantumAttack/Common/QuantumAttackSupport.cpp
+        EducationalQuantumAttack/Common/QuantumAttackReport.cpp
+        EducationalQuantumAttack/Engine/GroverEngine.cpp
+        EducationalQuantumAttack/Engine/PhaseEstimationEngine.cpp
+        EducationalQuantumAttack/Engine/ResourceModel.cpp
+        EducationalQuantumAttack/Engine/ShorFactoring.cpp
+        EducationalQuantumAttack/Engine/ShorEcdlp.cpp
+        EducationalQuantumAttack/Attacks/AttackCommon.cpp
+        EducationalQuantumAttack/Attacks/ToyAesGroverAttack.cpp
+        EducationalQuantumAttack/Attacks/ToyShaQuantumAttack.cpp
+        EducationalQuantumAttack/Attacks/ToyPublicKeyAnalysis.cpp
+        EducationalQuantumAttack/Attacks/ToyModuleLweGroverAttack.cpp
+        EducationalQuantumAttack/Sets/SetCommon.cpp
+        EducationalQuantumAttack/Sets/AesShaEcdsaQuantumAttack.cpp
+        EducationalQuantumAttack/Sets/AesShaRsaPssQuantumAttack.cpp
+        EducationalQuantumAttack/Sets/ShaAesMlKemQuantumAttack.cpp
+)
+target_include_directories(crypto_educational_quantum_attack PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(crypto_educational_quantum_attack PUBLIC
+        crypto_common crypto_system_educational crypto_analyzer_educational
+        crypto_quantum crypto_compute_engine)
+if(WIN32)
+    # GetProcessMemoryInfo (peak working set) lives in psapi on older Windows SDK targets.
+    target_link_libraries(crypto_educational_quantum_attack PRIVATE psapi)
+endif()
+crypto_apply_compiler_options(crypto_educational_quantum_attack)
+
+# Integrated quantum-attack analysis (2.3.5): runs the three independent quantum-attack
+# analyses and compares their results. Separate from crypto_integrated_educational_analysis.
+add_library(crypto_integrated_educational_quantum_attack STATIC
+        IntegratedEducationalQuantumAttack/IntegratedEducationalQuantumAttack.cpp
+        IntegratedEducationalQuantumAttack/QuantumAttackComparison.cpp
+        IntegratedEducationalQuantumAttack/QuantumAttackExport.cpp
+)
+target_include_directories(crypto_integrated_educational_quantum_attack PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(crypto_integrated_educational_quantum_attack PUBLIC crypto_educational_quantum_attack)
+crypto_apply_compiler_options(crypto_integrated_educational_quantum_attack)
+
 add_library(crypto_benchmark STATIC
         Benchmark/BenchmarkRunner.cpp)
 target_include_directories(crypto_benchmark PUBLIC
@@ -276,6 +321,8 @@ target_link_libraries(CryptoProject PRIVATE
         crypto_integrated_crypto_analysis
         crypto_educational_set_analysis
         crypto_integrated_educational_analysis
+        crypto_educational_quantum_attack
+        crypto_integrated_educational_quantum_attack
         crypto_benchmark
 )
 crypto_apply_compiler_options(CryptoProject)

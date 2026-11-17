@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.3.5
+
+- Added `EducationalQuantumAttack/`: independent quantum-attack analysis of the three educational sets on their real toy parameters. Simulated circuits: Grover (Toy AES, Toy SHA preimage) and Brassard-Hoyer-Tapp (Toy SHA collision). Toy ECC and Toy RSA are matched with Shor but are theory only (circuits not implemented); Toy Module-LWE is NOT MODELED.
+- Added `IntegratedEducationalQuantumAttack/`: runs the three independent analyses and compares them without merging the cryptosystems or summing estimated attack times.
+- Reports keep quantum simulator runtime, estimated quantum attack time and classical attack runtime apart, and write missing values as NOT MODELED / NOT EXECUTED instead of 0.
+- QuantumAttack 2.8: single-qubit phase shift and mid-circuit measurement added to the simulator.
+- See `CHANGELOG_2.3.5.md`, `README_2.3.5.md` and `QUANTUM_ATTACK_DESIGN.md`. Earlier 2.3.x notes are in `CHANGELOG_2.3.0.md` to `CHANGELOG_2.3.4.md`.
+
 ## 2.2.0
 
 - Added `CryptoSetAnalysis/` with three separately runnable and comparable cryptosystem sets: AES-SHA-ECDSA, AES-SHA-RSAPSS, and SHA-AES-MLKEM.
