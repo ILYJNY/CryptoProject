@@ -651,13 +651,50 @@ namespace
         ExportedFiles files;
         if (export_quantum_attack_reports(reports, std::string(DefaultQuantumAttackOutputDirectory), files))
         {
-            for (const auto& path : files.set_reports) std::cout << "Report saved: " << path << '\n';
-            std::cout << "Metrics CSV saved: " << files.metrics_csv << '\n'
-                      << "Metrics JSON saved: " << files.metrics_json << '\n';
+            for (const auto& path : files.set_reports)
+                std::cout << "Report saved: " << absolute_output_path(path) << '\n';
+            std::cout << "Metrics CSV saved: " << absolute_output_path(files.metrics_csv) << '\n'
+                      << "Metrics JSON saved: " << absolute_output_path(files.metrics_json) << '\n';
         }
         else
         {
             std::cout << "Warning: could not export the quantum attack reports.\n";
+        }
+    }
+
+    void show_educate_analysis()
+    {
+        using namespace crypto::educational_quantum_attack;
+        std::cout << "\n========== EducateAnalysis: real quantum crack of the three toy composites ==========\n"
+                  << "Enter a sentence. Each composite encrypts it, then every component is REALLY cracked\n"
+                  << "on the state-vector simulator (Grover and Shor), not estimated:\n"
+                  << "  Toy-AES_Toy-SHA_Toy-ECDSA  : Grover (AES, SHA) + Shor ECDLP (toy elliptic curve)\n"
+                  << "  Toy-AES_Toy-SHA_Toy-RSAPSS : Grover (AES, SHA) + Shor factoring (toy RSA modulus)\n"
+                  << "  Toy-AES_Toy-SHA_Toy-MLDSA  : Grover (AES, SHA) + custom Grover secret search (Module-LWE)\n"
+                  << "All intermediate values are printed and the crack time is split by execution method.\n"
+                  << "Tiny teaching parameters only; these crack times are not about real AES/SHA/ECDSA/RSA/ML-DSA.\n"
+                  << "This can take a little while (the toy RSA Shor factoring is the slowest part).\n";
+        const std::string message = read_message();
+        const QuantumAttackConfig base = read_quantum_attack_config();
+
+        EducateAnalysisConfig config;
+        config.primary_execution = base.execution;
+        config.progress = base.progress;
+        const EducateAnalysisReport report = run_educate_analysis(message, config);
+        std::cout << '\n' << report.report;
+        if (report.plaintext_empty) return;
+
+        std::string report_path;
+        std::string csv_path;
+        if (export_educate_analysis_report(
+                report, std::string(DefaultEducateOutputDirectory), report_path, csv_path))
+        {
+            std::cout << "Report saved: " << report_path << '\n'
+                      << "Metrics CSV saved: " << csv_path << '\n';
+        }
+        else
+        {
+            std::cout << "Warning: could not export the EducateAnalysis report.\n";
         }
     }
 
@@ -797,9 +834,10 @@ int main()
                       << "9. Educational Quantum Attack (three independent toy sets)\n"
                       << "10. Integrated Educational Quantum Attack (compare the three sets)\n"
                       << "11. Quantum Simulator Benchmark (QuantumAttack engine)\n"
+                      << "12. EducateAnalysis (real quantum crack of a sentence; per-backend timing)\n"
                       << "0. Exit\n";
 
-            switch (read_choice(0, 11))
+            switch (read_choice(0, 12))
             {
             case 1: show_crypto_set_analysis(); break;
             case 2: show_integrated_crypto_analysis(); break;
@@ -832,6 +870,7 @@ int main()
             case 9: show_educational_quantum_attack(); break;
             case 10: show_integrated_educational_quantum_attack(); break;
             case 11: show_quantum_simulator_benchmark(); break;
+            case 12: show_educate_analysis(); break;
             default:
                 running = false;
                 break;

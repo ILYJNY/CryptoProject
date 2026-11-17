@@ -23,6 +23,7 @@
 #include "EducationalQuantumAttack/Common/QuantumAttackReport.h"
 #include "EducationalQuantumAttack/Common/QuantumAttackTypes.h"
 #include "EducationalQuantumAttack/MessageCrack.h"
+#include "EducationalQuantumAttack/EducateAnalysis.h"
 #include "EducationalQuantumAttack/Sets/AesShaEcdsaQuantumAttack.h"
 #include "EducationalQuantumAttack/Sets/AesShaRsaPssQuantumAttack.h"
 #include "EducationalQuantumAttack/Sets/ShaAesMlKemQuantumAttack.h"

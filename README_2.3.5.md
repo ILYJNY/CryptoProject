@@ -73,6 +73,7 @@ Please read the last three rows carefully:
 9. Educational Quantum Attack (three independent toy sets)          NEW
 10. Integrated Educational Quantum Attack (compare the three sets)  NEW
 11. Quantum Simulator Benchmark (QuantumAttack engine)              NEW
+12. EducateAnalysis (real quantum crack of a sentence)              NEW
 0. Exit
 ```
 
@@ -84,8 +85,35 @@ Please read the last three rows carefully:
 - **10** runs all three analyses, prints the integrated comparison and writes its files.
 - **11** runs the existing `QuantumAttack` algorithm benchmark (Grover, QFT, toy Shor) on every
   backend. It measures the simulator, not an attack.
+- **12 EducateAnalysis** is the real-attack mode (see just below).
 
 The classical educational analyses stay where they were: `3` → `2. Educational Mode` → `6` / `7`.
+
+### Menu 12 — EducateAnalysis (real executed quantum cracks)
+
+This is the mode for an actual attack with a crack time. Enter a sentence; each of the three toy
+composites encrypts it and is then **really cracked on the state-vector simulator** (not
+estimated), with every intermediate value printed:
+
+```text
+Toy-AES_Toy-SHA_Toy-ECDSA  : Grover (Toy AES, Toy SHA) + Shor ECDLP    (toy elliptic curve)
+Toy-AES_Toy-SHA_Toy-RSAPSS : Grover (Toy AES, Toy SHA) + Shor factoring (toy RSA modulus)
+Toy-AES_Toy-SHA_Toy-MLDSA  : Grover (Toy AES, Toy SHA) + custom Grover secret search (Module-LWE)
+```
+
+- Shor really recovers the toy ECC scalar `k` (verified by `k*G = Q`) and really factors the toy
+  RSA modulus (verified by `p*q = N`); the custom Grover search really recovers the Module-LWE
+  secret. None of these are estimates.
+- The crack time of every component is reported for three execution methods: **Single CPU**,
+  **Multithreaded CPU** and **GPU parallel**. Without a CUDA GPU the GPU row shows `UNAVAILABLE`
+  and is never replaced by a CPU timing.
+- All intermediate values are printed: ground-truth and recovered AES key, decrypted sentence,
+  GCM nonce/tag/ciphertext, Toy SHA digest and a found preimage, the curve, base and public
+  points and the recovered scalar, the modulus, factors and order, and the Module-LWE
+  matrix/vector and recovered secret.
+- Toy sizes only (12-bit AES, 16-bit toy RSA, order-50 curve, `3^8` Module-LWE secrets); the
+  crack times are not about real AES-128, SHA-256, ECDSA, RSA or ML-DSA.
+- Reports are written to `Output/EducateAnalysis/` and the program prints their ABSOLUTE paths.
 
 ## 3. Reading a report
 
@@ -143,7 +171,9 @@ Output/IntegratedEducationalQuantumAttack/
 └── integrated_quantum_metrics.json
 ```
 
-The directories follow the project's existing `Output/<Module>/` convention. CSV column names carry
+The directories follow the project's existing `Output/<Module>/` convention. Since 2.3.5 the program prints
+the ABSOLUTE path of every file it writes, so reports are easy to find even when the program is
+launched from an IDE build directory rather than the project root. CSV column names carry
 their unit (`_ms`, `_seconds`, `_bytes`, `_bits`); each numeric column has a `_kind` column with its
 provenance. Missing values are written as text in CSV and as `null` in JSON.
 

@@ -287,10 +287,48 @@ IntegratedEducationalQuantumAttack/
 
 CMake targets: `crypto_educational_quantum_attack` and `crypto_integrated_educational_quantum_attack`.
 
+## Real executed attacks and the EducateAnalysis mode (2.3.5)
+
+Besides the resource-analysis view above, 2.3.5 adds attacks that actually run on the
+state-vector simulator and an interactive mode that drives them.
+
+- `Engine/ShorFactoring` factors an odd composite by iterative one-control-qubit phase estimation
+  of modular multiplication (`n + 1` qubits for an `n`-bit modulus), recovers the order by
+  continued fractions (testing convergent denominators and small multiples), and extracts a factor
+  from an even order with a non-trivial square root of unity. It retries over several bases and a
+  few shots. It factors the toy RSA modulus (16-bit by default) reliably on the simulator; larger
+  moduli are refused when `n + 1` exceeds the qubit budget.
+- `Engine/ShorEcdlp` recovers the toy elliptic-curve discrete logarithm by two-stage phase
+  estimation of the point translations `+G` and `+Q`. Points are enumerated and translated by real
+  coordinate arithmetic through a coordinate->index table, so the secret is never used; the
+  recovered scalar is verified by `k*G = Q`. The register is `ceil(log2 r) + 1` qubits.
+- `Attacks/ToyModuleLweGroverAttack` runs a custom Grover search over the `3^8 = 6561`
+  small-secret candidates (13 qubits). The oracle marks the candidates the real toy-LWE predicate
+  accepts. It is explicitly not Shor, because Module-LWE is neither factoring nor a discrete log.
+- `EducateAnalysis` (menu 12) ties these together: it encrypts a user sentence with each toy
+  composite, runs the Grover and Shor/custom attacks, verifies and prints every recovered value
+  and all intermediate values, and times one decisive circuit of each component under three
+  execution methods (single CPU, multithreaded CPU, GPU parallel). A GPU row is shown as
+  UNAVAILABLE, never replaced by a CPU timing, when no CUDA backend is built. Reports are written
+  with absolute paths.
+
+These attacks use deliberately tiny teaching sizes (16-bit toy RSA, order-50 curve, `3^8`
+secrets). They are genuine executed attacks on the toys, and say nothing about real AES-128,
+SHA-256, ECDSA, RSA or ML-DSA.
+
+### Output paths
+
+All quantum-attack, message-crack, integrated and EducateAnalysis exports now report the absolute
+path actually written, fixing the earlier behavior where only a relative `Output/...` path was
+printed and the files landed under whatever working directory launched the program.
+
 ## 13. Known limitations
 
-- The Shor circuits for Toy ECC and Toy RSA are not implemented; only resource estimates are given.
-- Module-LWE has no quantum attack model.
+- In the resource-analysis view (menu 9) the Shor circuits for Toy ECC and the large default Toy
+  RSA modulus are not executed; only resource estimates are given there. Real executed Shor
+  attacks are provided by the EducateAnalysis mode (menu 12) at sizes that fit the simulator.
+- Module-LWE has no Shor-style model; the EducateAnalysis mode attacks it with a custom Grover
+  secret search over the finite toy candidate space (not a claim about real ML-DSA/ML-KEM).
 - The cost inside every oracle (AES-GCM verification, SHA-256, table lookup) is not modeled.
 - The Shor resource figures are extrapolations of formulas fitted to cryptographic sizes.
 - CUDA compilation and GPU execution were not verified for this release; the two new simulator

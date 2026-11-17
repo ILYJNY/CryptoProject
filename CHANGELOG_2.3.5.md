@@ -55,11 +55,44 @@
   of literals; its results are unchanged.
 - Project version 2.3.4 → 2.3.5.
 
+## Real executed quantum attacks and the EducateAnalysis mode (added in this release)
+
+Earlier revisions of this module reported Shor for the toy ECC and toy RSA components as
+resource estimates only. This release adds ACTUAL executed quantum attacks on the state-vector
+simulator, and an interactive mode that drives them end to end.
+
+- **`EducateAnalysis` mode (main menu entry 12).** Enter a sentence; each of the three toy
+  composites encrypts it and is then really cracked, with every intermediate value printed and
+  the crack time split by execution method (Single CPU / Multithreaded CPU / GPU parallel):
+  - `Toy-AES_Toy-SHA_Toy-ECDSA`  : Grover (Toy AES, Toy SHA) + **Shor ECDLP** on the toy curve.
+  - `Toy-AES_Toy-SHA_Toy-RSAPSS` : Grover (Toy AES, Toy SHA) + **Shor factoring** of the toy modulus.
+  - `Toy-AES_Toy-SHA_Toy-MLDSA`  : Grover (Toy AES, Toy SHA) + a **custom Grover secret search**
+    on the Module-LWE secret (Shor does not apply to Module-LWE).
+  Every attack is executed and every recovered value (AES key, decrypted sentence, preimage,
+  curve scalar k with k*G = Q, RSA factors and order, Module-LWE secret) is verified against the
+  real instance and printed, together with the ciphertext, nonce, tag, digest, curve points and
+  modulus. Exports `educate_analysis_report.txt` and `educate_analysis_metrics.csv`.
+- **`Engine/ShorFactoring`** - real integer factoring by iterative (one-control-qubit) quantum
+  phase estimation of modular multiplication (n + 1 qubits), continued-fraction order recovery,
+  and factor extraction, with multi-base/multi-shot retries. Reliably factors the toy modulus
+  (default 16-bit) on the simulator.
+- **`Engine/ShorEcdlp`** - real elliptic-curve discrete-logarithm recovery by two-stage phase
+  estimation of the point translations +G and +Q, computed by coordinate arithmetic (never using
+  the secret) and verified by k*G = Q.
+- **`Attacks/ToyModuleLweGroverAttack`** - a real custom Grover search over the 3^8 = 6561
+  small-secret candidates (13 qubits); it is explicitly not Shor.
+- **Output location fix.** All quantum-attack, message-crack, integrated and EducateAnalysis
+  exports now report the ABSOLUTE path actually written, so the files are found regardless of the
+  working directory the program was launched from (previously only a relative `Output/...` path
+  was printed, which landed under the launch directory - e.g. an IDE build folder - and looked
+  "missing").
+
 ## Not implemented in this release
 
-- The Shor circuits for Toy ECC (elliptic-curve discrete logarithm) and for Toy RSA (factoring the
-  generated modulus). Their reports are theory only: `Circuit implemented: NO`,
-  `Attack outcome: NOT ATTEMPTED`. No ECC scalar and no RSA factor is recovered by a quantum method.
+- In the `EducationalQuantumAttack` RESOURCE-ANALYSIS view (menu 9), Toy ECC and Toy RSA remain
+  theory only, because that view analyzes the large default toy RSA modulus (24-bit, ~73 qubits)
+  which does not fit the simulator. The real executed Shor attacks live in the EducateAnalysis
+  mode (menu 12), which uses a toy RSA modulus size that genuinely runs (default 16-bit).
 - Any quantum attack model for Module-LWE.
 - The cost inside the Grover and BHT oracles (reversible AES-GCM, SHA-256, table lookup).
 - `Engine/PhaseEstimationEngine` (iterative phase estimation on the two new simulator operations) is

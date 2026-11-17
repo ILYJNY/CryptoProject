@@ -260,15 +260,19 @@ crypto_apply_compiler_options(crypto_integrated_educational_analysis)
 add_library(crypto_educational_quantum_attack STATIC
         EducationalQuantumAttack/EducationalQuantumAttack.cpp
         EducationalQuantumAttack/MessageCrack.cpp
+        EducationalQuantumAttack/EducateAnalysis.cpp
         EducationalQuantumAttack/Common/QuantumAttackSupport.cpp
         EducationalQuantumAttack/Common/QuantumAttackReport.cpp
         EducationalQuantumAttack/Engine/GroverEngine.cpp
         EducationalQuantumAttack/Engine/PhaseEstimationEngine.cpp
         EducationalQuantumAttack/Engine/ResourceModel.cpp
+        EducationalQuantumAttack/Engine/ShorFactoring.cpp
+        EducationalQuantumAttack/Engine/ShorEcdlp.cpp
         EducationalQuantumAttack/Attacks/AttackCommon.cpp
         EducationalQuantumAttack/Attacks/ToyAesGroverAttack.cpp
         EducationalQuantumAttack/Attacks/ToyShaQuantumAttack.cpp
         EducationalQuantumAttack/Attacks/ToyPublicKeyAnalysis.cpp
+        EducationalQuantumAttack/Attacks/ToyModuleLweGroverAttack.cpp
         EducationalQuantumAttack/Sets/SetCommon.cpp
         EducationalQuantumAttack/Sets/AesShaEcdsaQuantumAttack.cpp
         EducationalQuantumAttack/Sets/AesShaRsaPssQuantumAttack.cpp

@@ -191,8 +191,13 @@ namespace crypto::educational_quantum_attack
         try
         {
             std::filesystem::create_directories(directory);
-            report_path = directory + "/message_crack_report.txt";
-            csv_path = directory + "/message_crack_metrics.csv";
+            const auto abs = [](const std::string& path)
+            {
+                try { return std::filesystem::weakly_canonical(std::filesystem::absolute(path)).string(); }
+                catch (const std::exception&) { return path; }
+            };
+            report_path = abs(directory + "/message_crack_report.txt");
+            csv_path = abs(directory + "/message_crack_metrics.csv");
             {
                 std::ofstream text(report_path, std::ios::out | std::ios::trunc);
                 if (!text) return false;

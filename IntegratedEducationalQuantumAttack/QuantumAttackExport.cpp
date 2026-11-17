@@ -24,10 +24,15 @@ namespace crypto::integrated_educational_quantum_attack
         try
         {
             std::filesystem::create_directories(directory);
-            files.report = directory + "/integrated_quantum_report.txt";
-            files.metrics_csv = directory + "/integrated_quantum_metrics.csv";
-            files.comparison_csv = directory + "/quantum_attack_comparison.csv";
-            files.metrics_json = directory + "/integrated_quantum_metrics.json";
+            const auto abs = [](const std::string& path)
+            {
+                try { return std::filesystem::weakly_canonical(std::filesystem::absolute(path)).string(); }
+                catch (const std::exception&) { return path; }
+            };
+            files.report = abs(directory + "/integrated_quantum_report.txt");
+            files.metrics_csv = abs(directory + "/integrated_quantum_metrics.csv");
+            files.comparison_csv = abs(directory + "/quantum_attack_comparison.csv");
+            files.metrics_json = abs(directory + "/integrated_quantum_metrics.json");
             return write_file(files.report, result.report) &&
                    write_file(files.metrics_csv, aggregate_metrics_csv(result.comparison, result.status)) &&
                    write_file(files.comparison_csv, comparison_csv(result.comparison)) &&

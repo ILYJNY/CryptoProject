@@ -516,6 +516,11 @@ namespace crypto::educational_quantum_attack
         try
         {
             std::filesystem::create_directories(directory);
+            const auto abs = [](const std::string& path)
+            {
+                try { return std::filesystem::weakly_canonical(std::filesystem::absolute(path)).string(); }
+                catch (const std::exception&) { return path; }
+            };
             files = {};
             for (const SetAttackReport& report : reports)
             {
@@ -524,16 +529,16 @@ namespace crypto::educational_quantum_attack
                 if (!output) return false;
                 output << format_set_report(report);
                 if (!output) return false;
-                files.set_reports.push_back(path);
+                files.set_reports.push_back(abs(path));
             }
-            files.metrics_csv = directory + "/quantum_attack_metrics.csv";
+            files.metrics_csv = abs(directory + "/quantum_attack_metrics.csv");
             {
                 std::ofstream output(files.metrics_csv, std::ios::out | std::ios::trunc);
                 if (!output) return false;
                 output << metrics_csv(reports);
                 if (!output) return false;
             }
-            files.metrics_json = directory + "/quantum_attack_metrics.json";
+            files.metrics_json = abs(directory + "/quantum_attack_metrics.json");
             {
                 std::ofstream output(files.metrics_json, std::ios::out | std::ios::trunc);
                 if (!output) return false;

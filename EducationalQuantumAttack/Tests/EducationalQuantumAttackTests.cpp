@@ -12,16 +12,23 @@
 // time categories, GPU honesty, the three independent sets and the file exports.
 
 #include "EducationalQuantumAttack/Attacks/ToyAesGroverAttack.h"
+#include "EducationalQuantumAttack/Attacks/ToyModuleLweGroverAttack.h"
 #include "EducationalQuantumAttack/Attacks/ToyPublicKeyAnalysis.h"
 #include "EducationalQuantumAttack/Attacks/ToyShaQuantumAttack.h"
 #include "EducationalQuantumAttack/Common/QuantumAttackSupport.h"
+#include "EducationalQuantumAttack/EducateAnalysis.h"
 #include "EducationalQuantumAttack/EducationalQuantumAttack.h"
 #include "EducationalQuantumAttack/Engine/GroverEngine.h"
 #include "EducationalQuantumAttack/Engine/PhaseEstimationEngine.h"
 #include "EducationalQuantumAttack/Engine/ResourceModel.h"
+#include "EducationalQuantumAttack/Engine/ShorEcdlp.h"
+#include "EducationalQuantumAttack/Engine/ShorFactoring.h"
 #include "EducationalQuantumAttack/Sets/SetCommon.h"
 
+#include "CryptoSystem/Educational/ECC/ToyECC.h"
 #include "CryptoSystem/Educational/EducationalParameters.h"
+#include "CryptoSystem/Educational/ModuleLWE/ToyModuleLWE.h"
+#include "CryptoSystem/Educational/RSA/ToyRSA.h"
 #include "CryptoSystem/Educational/SHA/ToySha256.h"
 #include "QuantumAttack/Backend/CUDA/CUDAQuantumBackend.h"
 
@@ -692,6 +699,142 @@ namespace
     }
 
     // ---------------------------------------------------------------------------------
+    // Real Shor factoring, real Shor ECDLP, real custom Module-LWE Grover (executed attacks)
+    // ---------------------------------------------------------------------------------
+    void test_real_shor_factoring()
+    {
+        // 3233 = 61 * 53 is a genuine odd composite; Shor order finding must factor it.
+        ShorFactoringOptions options;
+        options.execution.backend = crypto::quantum::QuantumBackendType::CpuSingleThread;
+        options.seed = 42U;
+        options.qubit_budget = 26U;
+        const ShorFactoringResult result = run_shor_factoring(3233U, options);
+        require(result.executed, "Shor factoring must execute within the budget for N = 3233.");
+        require(result.factored && result.factor_p * result.factor_q == 3233U,
+                "Shor must actually factor 3233 (a real executed attack, not an estimate).");
+        require((result.factor_p == 61U || result.factor_p == 53U) &&
+                (result.factor_q == 61U || result.factor_q == 53U),
+                "The recovered factors of 3233 must be 61 and 53.");
+        require(result.total_qubits == bit_length(3233U) + 1U,
+                "Shor factoring uses n + 1 qubits (one reused control qubit).");
+        require(result.recovered_order % 2U == 0U && mod_pow(result.winning_base, result.recovered_order, 3233U) == 1U,
+                "The recovered order must be an even multiplicative order of the winning base.");
+
+        ShorFactoringOptions tight = options;
+        tight.qubit_budget = 5U;
+        const ShorFactoringResult refused = run_shor_factoring(3233U, tight);
+        require(!refused.executed && !refused.factored,
+                "A circuit over the qubit budget must be reported as not executed, not factored.");
+    }
+
+    void test_real_shor_ecdlp()
+    {
+        for (std::uint64_t seed = 1U; seed <= 5U; ++seed)
+        {
+            const auto sample = educational::generate_toy_ecc_sample();
+            ShorEcdlpOptions options;
+            options.execution.backend = crypto::quantum::QuantumBackendType::CpuSingleThread;
+            options.seed = seed;
+            options.qubit_budget = 26U;
+            const ShorEcdlpResult result = run_shor_ecdlp(sample.public_instance, options);
+            require(result.executed, "ECDLP phase estimation must execute within the budget.");
+            require(result.recovered, "Shor ECDLP must recover the discrete logarithm (a real executed attack).");
+            require(result.recovered_scalar == sample.ground_truth.private_scalar,
+                    "The recovered scalar must equal the withheld private scalar.");
+            const educational::ToyEccPoint q{sample.public_instance.public_x, sample.public_instance.public_y, false};
+            require(educational::toy_ecc_multiply(result.recovered_scalar, educational::toy_ecc_base_point()) == q,
+                    "The recovered scalar must be verified by coordinate arithmetic: k*G == Q.");
+            require(result.total_qubits == result.register_qubits + 1U, "ECDLP uses register + 1 control qubit.");
+        }
+    }
+
+    void test_real_module_lwe_grover()
+    {
+        const auto sample = educational::generate_toy_lwe_sample();
+        QuantumAttackConfig config = test_config(314U);
+        const ToyModuleLweGroverAttack attack =
+            attack_toy_module_lwe_with_grover(sample.public_instance, config, 314U);
+        require(attack.executed && attack.secret_recovered,
+                "The custom Module-LWE Grover attack must execute and recover the secret.");
+        require(attack.recovered_secret == sample.ground_truth.secret,
+                "The recovered Module-LWE secret must equal the withheld secret.");
+        require(attack.search_qubits == 13U && attack.candidate_space == educational::ToyModuleSecretCandidateCount,
+                "The Module-LWE search covers 3^8 candidates in 13 qubits.");
+        require(attack.grover_iterations > 0U, "The custom Grover attack must record its oracle calls.");
+    }
+
+    void test_educate_analysis_mode()
+    {
+        EducateAnalysisConfig config;
+        config.primary_execution.backend = crypto::quantum::QuantumBackendType::CpuMultiThread;
+        config.primary_execution.cpu_threads = 2U;
+        config.seed = 99U;
+        config.rsa_modulus_bits = 16U;
+        config.measure_gpu = true;
+
+        const EducateAnalysisReport empty = run_educate_analysis(std::string(), config);
+        require(empty.plaintext_empty && empty.sets.empty(), "An empty sentence must crack nothing.");
+
+        const std::string sentence = "Meet me at midnight.";
+        const EducateAnalysisReport report = run_educate_analysis(sentence, config);
+        require(report.sets.size() == 3U, "EducateAnalysis must cover the three toy composites.");
+        require(report.sets[0].name == "Toy-AES_Toy-SHA_Toy-ECDSA" &&
+                report.sets[1].name == "Toy-AES_Toy-SHA_Toy-RSAPSS" &&
+                report.sets[2].name == "Toy-AES_Toy-SHA_Toy-MLDSA",
+                "The three composites must be named as requested.");
+
+        const char* expected_last_algorithm[3] = {"Shor (ECDLP)", "Shor (factoring)", "Custom Grover secret search (not Shor)"};
+        for (std::size_t index = 0U; index < report.sets.size(); ++index)
+        {
+            const SetCrack& set = report.sets[index];
+            require(set.components.size() == 3U, "Each composite has AES, SHA and a public-key component.");
+            require(!set.encryption.empty(), "The encryption of the sentence must be reported.");
+            require(set.components[0].algorithm == "Grover" && set.components[1].algorithm == "Grover",
+                    "AES and SHA are attacked with Grover.");
+            require(set.components[2].algorithm == std::string(expected_last_algorithm[index]),
+                    "The public-key component must use the requested algorithm.");
+            for (const ComponentCrack& component : set.components)
+            {
+                require(component.executed, "Every EducateAnalysis attack must actually execute on the simulator.");
+                require(component.cracked, "Every component must be really cracked at these toy sizes.");
+                require(!component.inputs.empty() && !component.recovered.empty(),
+                        "Intermediate input and recovered values must both be reported.");
+                // Per-backend timing: single CPU, multithreaded CPU, and a GPU row.
+                require(component.timings.size() == 3U, "Three execution methods must be compared.");
+                require(component.timings[0].method == "Single CPU" && component.timings[0].executed &&
+                        component.timings[1].method == "Multithreaded CPU" && component.timings[1].executed,
+                        "Both CPU methods must be timed.");
+                const BackendTiming& gpu = component.timings[2];
+                require(gpu.method == "GPU parallel", "The third method is GPU parallel.");
+                if (!crypto::quantum::cuda_backend::CUDAQuantumBackend::is_available())
+                    require(!gpu.executed && contains(gpu.note, "UNAVAILABLE"),
+                            "Without a GPU backend, the GPU row must say UNAVAILABLE and must not run on the CPU.");
+            }
+        }
+        // The RSA component must report real factors whose product is the modulus.
+        bool rsa_product_ok = false;
+        for (const auto& [name, value] : report.sets[1].components[2].recovered)
+            if (name == "Product checks out" && value == "YES") rsa_product_ok = true;
+        require(rsa_product_ok, "The toy RSA factoring must recover factors whose product is the modulus.");
+
+        // Export to an absolute path regardless of the working directory.
+        const std::string directory = "EducateAnalysisTestOutput";
+        std::filesystem::remove_all(directory);
+        std::string report_path;
+        std::string csv_path;
+        require(export_educate_analysis_report(report, directory, report_path, csv_path),
+                "The EducateAnalysis export failed.");
+        require(std::filesystem::path(report_path).is_absolute() && std::filesystem::path(csv_path).is_absolute(),
+                "Exported paths must be absolute so the files can be found regardless of the launch directory.");
+        require(std::filesystem::exists(report_path) && std::filesystem::file_size(report_path) > 0U &&
+                std::filesystem::exists(csv_path) && std::filesystem::file_size(csv_path) > 0U,
+                "The EducateAnalysis export files must exist and be non-empty.");
+        require(contains(read_file(csv_path), "single_cpu_ms") && contains(read_file(csv_path), "gpu_status"),
+                "The crack CSV must carry the per-method columns.");
+        std::filesystem::remove_all(directory);
+    }
+
+    // ---------------------------------------------------------------------------------
     // Message crack-timing feature: enter a sentence, encrypt it, crack it, time the crack
     // ---------------------------------------------------------------------------------
     void test_message_crack_timing()
@@ -775,6 +918,10 @@ int main()
         test_set_status_logic();
         test_three_independent_sets();
         test_individual_set_entry_points();
+        test_real_shor_factoring();
+        test_real_shor_ecdlp();
+        test_real_module_lwe_grover();
+        test_educate_analysis_mode();
         test_message_crack_timing();
         std::cout << "[PASS] Educational quantum attack tests completed successfully.\n";
         return 0;
