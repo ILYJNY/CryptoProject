@@ -53,6 +53,22 @@ int main()
         multi.apply_diffusion();
         compare_states(single.state(), multi.state());
 
+        // QuantumAttack 2.8: phase shift and mid-circuit measurement give the same state on
+        // the single-thread and multi-thread CPU paths.
+        single.apply_phase_shift(3U, 0.7);
+        multi.apply_phase_shift(3U, 0.7);
+        const QubitMeasurement single_measurement = single.measure_qubit(5U, 0.3);
+        const QubitMeasurement multi_measurement = multi.measure_qubit(5U, 0.3);
+        require(single_measurement.outcome == multi_measurement.outcome,
+                "CPU backends disagree on a mid-circuit measurement outcome.");
+        require(std::abs(single_measurement.probability_of_one - multi_measurement.probability_of_one) <= 1e-10,
+                "CPU backends disagree on a measurement probability.");
+        compare_states(single.state(), multi.state());
+        double norm = 0.0;
+        for (const Complex& amplitude : multi.state()) norm += std::norm(amplitude);
+        require(std::abs(norm - 1.0) <= 1e-9, "The state must stay normalized after a measurement collapse.");
+        require(multi.measurement_count() == 1U, "The measurement counter was not updated.");
+
         const auto grover = run_grover_experiment(3U, 5U, 1024U, multi_options);
         require(grover.passed, "CPU multi-thread Grover experiment did not pass.");
         require(grover.backend == "CPU-MULTI", "Backend label was not propagated to the experiment result.");

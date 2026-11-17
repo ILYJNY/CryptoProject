@@ -60,3 +60,21 @@ Not verified in the current delivery:
 
 A test pass would not establish cryptographic security. The custom RSA, P-256, and AES-GCM routines
 are educational demonstrations only.
+
+## Additions in v2.3.5 — educational quantum attack analysis
+
+| Area | Status | Scope and qualification |
+|---|---|---|
+| Toy AES Grover attack | Implemented, simulated | Grover over the real 12-bit restricted key space; oracle applied through a classically built truth table; recovered key verified by AES-GCM |
+| Toy SHA preimage attack | Implemented, simulated | Grover with an unknown number of solutions on the real 16-bit digest; found message verified by recomputation |
+| Toy SHA collision attack | Implemented, simulated | Brassard-Hoyer-Tapp (classical table + Grover); reported separately from the preimage attack; quantum-accessible table cost not modeled |
+| Toy ECC Shor (ECDLP) | Theory only | Circuit not implemented; formula-based resource estimate extrapolated to the toy field; no scalar recovered by a quantum method |
+| Toy RSA Shor (factoring) | Theory only | Circuit for the generated modulus not implemented; formula-based resource estimate; the N = 15 toy run is a separate validation experiment only |
+| Toy Module-LWE quantum attack | NOT MODELED | Shor does not apply; no qubit, gate, depth or time figure is produced |
+| Grover / BHT oracle circuits | NOT MODELED | Reversible AES-GCM, SHA-256 and table-lookup circuit costs are excluded from every resource figure |
+| Integrated quantum attack analysis | Implemented | Comparison and aggregation of the three independent analyses; estimated attack times are not summed |
+| Simulator phase shift / mid-circuit measurement | Implemented (QuantumAttack 2.8) | CPU path only; counted as CPU fallback under a CUDA backend |
+| Iterative phase estimation engine | Implemented, engine level only | Tested on a cyclic-shift permutation; not used by any attack in this release |
+
+Verification for v2.3.5: CPU-only Linux, GCC 13.3 (Release, Debug) and Clang 18.1 (Release); all nine
+CTest targets passed. Not verified: MSVC compilation of the new code, CUDA compilation, GPU execution.

@@ -30,6 +30,14 @@ namespace crypto::quantum
         bool used_pinned_host_memory = false;
     };
 
+    // Result of a projective Z-basis measurement of a single qubit (QuantumAttack 2.8).
+    struct QubitMeasurement
+    {
+        bool outcome = false;
+        double probability_of_one = 0.0;
+        double outcome_probability = 0.0;
+    };
+
     class QuantumSimulator final
     {
     public:
@@ -51,6 +59,7 @@ namespace crypto::quantum
         [[nodiscard]] std::size_t state_vector_bytes() const noexcept;
         [[nodiscard]] std::size_t gate_count() const noexcept;
         [[nodiscard]] std::size_t operation_depth() const noexcept;
+        [[nodiscard]] std::size_t measurement_count() const noexcept;
         [[nodiscard]] const std::vector<Complex>& state() const;
 
         void reset_zero();
@@ -72,6 +81,17 @@ namespace crypto::quantum
         void apply_phase_flip_gpu(std::size_t basis_index, int device_index, QuantumGpuTiming& timing);
         void apply_diffusion_gpu(int device_index, QuantumGpuTiming& timing);
         void apply_qft(const std::vector<std::size_t>& target_qubits);
+
+        // QuantumAttack 2.8 additions for iterative (semiclassical-QFT) phase estimation.
+        // Both operations always run on the CPU reference path. When a CUDA backend is
+        // selected they are counted as CPU fallback operations, never as GPU operations.
+        //
+        // apply_phase_shift applies diag(1, e^{i*angle}) to the target qubit.
+        void apply_phase_shift(std::size_t target, double angle_radians);
+        // measure_qubit performs a mid-circuit projective measurement: it samples the
+        // outcome from the caller-supplied uniform value in [0, 1), collapses the state
+        // and renormalizes it. It counts as a measurement, not as a gate.
+        [[nodiscard]] QubitMeasurement measure_qubit(std::size_t target, double uniform_sample);
 
         [[nodiscard]] std::vector<double> probabilities() const;
         [[nodiscard]] MeasurementResult measure_all(
@@ -104,5 +124,6 @@ namespace crypto::quantum
         mutable QuantumBackendStatistics backend_statistics_{};
         std::size_t gate_count_ = 0;
         std::size_t operation_depth_ = 0;
+        std::size_t measurement_count_ = 0;
     };
 }

@@ -4,6 +4,7 @@
 
 #include <array>
 #include <cstdint>
+#include <stdexcept>
 
 namespace crypto::educational
 {
@@ -134,24 +135,39 @@ namespace crypto::educational
         return sample;
     }
 
+    ToyModuleSmallVector decode_toy_lwe_candidate(const std::uint64_t encoded)
+    {
+        if (encoded >= ToyModuleSecretCandidateCount)
+            throw std::out_of_range("The toy Module-LWE candidate index is outside the 3^8 candidate space.");
+        std::uint64_t state = encoded;
+        ToyModuleSmallVector candidate{};
+        for (std::size_t module_index = 0; module_index < ToyModuleRank; ++module_index)
+        {
+            for (std::size_t coefficient = 0; coefficient < ToyModuleDegree; ++coefficient)
+            {
+                const auto trit = static_cast<std::int8_t>(state % 3ULL);
+                candidate[module_index][coefficient] = static_cast<std::int8_t>(trit - 1);
+                state /= 3ULL;
+            }
+        }
+        return candidate;
+    }
+
+    bool toy_lwe_candidate_matches(
+        const ToyLwePublicInstance& instance,
+        const ToyModuleSmallVector& candidate)
+    {
+        return candidate_matches(instance, candidate);
+    }
+
     ToyLweAnalysis analyze_toy_lwe(const ToyLwePublicInstance& instance)
     {
         ToyLweAnalysis result;
-        constexpr std::uint64_t candidate_count = 6561ULL; // 3^(rank * degree) = 3^8.
+        constexpr std::uint64_t candidate_count = ToyModuleSecretCandidateCount; // 3^(rank * degree) = 3^8.
 
         for (std::uint64_t encoded = 0; encoded < candidate_count; ++encoded)
         {
-            std::uint64_t state = encoded;
-            ToyModuleSmallVector candidate{};
-            for (std::size_t module_index = 0; module_index < ToyModuleRank; ++module_index)
-            {
-                for (std::size_t coefficient = 0; coefficient < ToyModuleDegree; ++coefficient)
-                {
-                    const auto trit = static_cast<std::int8_t>(state % 3ULL);
-                    candidate[module_index][coefficient] = static_cast<std::int8_t>(trit - 1);
-                    state /= 3ULL;
-                }
-            }
+            const ToyModuleSmallVector candidate = decode_toy_lwe_candidate(encoded);
 
             ++result.candidates_tested;
             if (candidate_matches(instance, candidate))

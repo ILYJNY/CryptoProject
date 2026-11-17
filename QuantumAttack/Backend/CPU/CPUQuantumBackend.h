@@ -32,6 +32,16 @@ namespace crypto::quantum::cpu
             std::size_t total_qubits,
             const std::vector<std::size_t>& target_qubits) const;
 
+        // Added in QuantumAttack 2.8: single-qubit phase gate diag(1, e^{i*angle}) and the
+        // two halves of a projective Z-basis measurement of one qubit.
+        void apply_phase_shift(std::vector<Complex>& state, std::size_t target, double angle) const;
+        [[nodiscard]] double probability_of_one(const std::vector<Complex>& state, std::size_t target) const;
+        void collapse_qubit(
+            std::vector<Complex>& state,
+            std::size_t target,
+            bool outcome,
+            double outcome_probability) const;
+
     private:
         mutable QuantumThreadPool pool_;
     };

@@ -14,12 +14,8 @@ namespace crypto::educational
         constexpr std::uint32_t B = 3U;
         constexpr std::uint32_t ORDER = 50U;
 
-        struct Point
-        {
-            std::uint32_t x = 0;
-            std::uint32_t y = 0;
-            bool infinity = true;
-        };
+        // The public ToyEccPoint has the same shape as the original private point type.
+        using Point = ToyEccPoint;
 
         [[nodiscard]] std::uint32_t inverse(const std::uint32_t value)
         {
@@ -56,10 +52,12 @@ namespace crypto::educational
             return {x, y, false};
         }
 
-        [[nodiscard]] Point multiply(std::uint32_t scalar)
+        constexpr std::uint32_t BASE_X = 0U;
+        constexpr std::uint32_t BASE_Y = 10U;
+
+        [[nodiscard]] Point multiply_point(std::uint32_t scalar, Point base)
         {
             Point result{};
-            Point base{0U, 10U, false};
             while (scalar > 0U)
             {
                 if ((scalar & 1U) != 0U) result = add(result, base);
@@ -68,6 +66,49 @@ namespace crypto::educational
             }
             return result;
         }
+
+        [[nodiscard]] Point multiply(const std::uint32_t scalar)
+        {
+            return multiply_point(scalar, Point{BASE_X, BASE_Y, false});
+        }
+    }
+
+    bool operator==(const ToyEccPoint& left, const ToyEccPoint& right) noexcept
+    {
+        if (left.infinity || right.infinity) return left.infinity == right.infinity;
+        return left.x == right.x && left.y == right.y;
+    }
+
+    ToyEccCurveParameters toy_ecc_curve_parameters() noexcept
+    {
+        return {P, A, B, BASE_X, BASE_Y, ORDER};
+    }
+
+    ToyEccPoint toy_ecc_base_point() noexcept
+    {
+        return {BASE_X, BASE_Y, false};
+    }
+
+    bool toy_ecc_is_on_curve(const ToyEccPoint& point) noexcept
+    {
+        if (point.infinity) return true;
+        if (point.x >= P || point.y >= P) return false;
+        return (point.y * point.y) % P ==
+            (point.x * point.x * point.x + A * point.x + B) % P;
+    }
+
+    ToyEccPoint toy_ecc_add(const ToyEccPoint& left, const ToyEccPoint& right)
+    {
+        if (!toy_ecc_is_on_curve(left) || !toy_ecc_is_on_curve(right))
+            raise_error(ErrorCode::InvalidArgument, "Toy elliptic-curve addition requires points on the curve.");
+        return add(left, right);
+    }
+
+    ToyEccPoint toy_ecc_multiply(const std::uint32_t scalar, const ToyEccPoint& point)
+    {
+        if (!toy_ecc_is_on_curve(point))
+            raise_error(ErrorCode::InvalidArgument, "Toy elliptic-curve multiplication requires a point on the curve.");
+        return multiply_point(scalar, point);
     }
 
     ToyEccSample generate_toy_ecc_sample()

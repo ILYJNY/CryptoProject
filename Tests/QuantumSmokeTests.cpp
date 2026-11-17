@@ -53,6 +53,46 @@ int main()
         catch (const std::length_error&) { limitCaught = true; }
         require(limitCaught, "The simulator did not enforce its qubit limit.");
 
+        // QuantumAttack 2.8: single-qubit phase shift and mid-circuit measurement.
+        {
+            crypto::quantum::QuantumSimulator phase(1U);
+            phase.apply_hadamard(0U);
+            phase.apply_phase_shift(0U, 3.14159265358979323846);
+            phase.apply_hadamard(0U);
+            const auto phase_probabilities = phase.probabilities();
+            require(phase_probabilities[0] < 1e-9 && std::abs(phase_probabilities[1] - 1.0) < 1e-9,
+                    "A phase shift of pi must act like a Z gate.");
+            require(phase.gate_count() == 3U && phase.measurement_count() == 0U,
+                    "The phase shift must be counted as a gate.");
+
+            crypto::quantum::QuantumSimulator bell(2U);
+            bell.apply_hadamard(0U);
+            bell.apply_cnot(0U, 1U);
+            const auto first = bell.measure_qubit(0U, 0.25);
+            require(first.outcome && std::abs(first.probability_of_one - 0.5) < 1e-9 &&
+                    std::abs(first.outcome_probability - 0.5) < 1e-9,
+                    "A Bell-pair qubit must be measured as 1 with probability one half.");
+            require(std::abs(bell.probabilities()[3] - 1.0) < 1e-9,
+                    "Measuring one half of a Bell pair must collapse the state onto |11>.");
+            const auto partner = bell.measure_qubit(1U, 0.999);
+            require(partner.outcome && std::abs(partner.probability_of_one - 1.0) < 1e-9,
+                    "After the collapse the partner qubit must be 1 with certainty.");
+            require(bell.measurement_count() == 2U && bell.gate_count() == 2U,
+                    "Measurements must be counted separately from gates.");
+
+            crypto::quantum::QuantumSimulator bell_zero(2U);
+            bell_zero.apply_hadamard(0U);
+            bell_zero.apply_cnot(0U, 1U);
+            const auto zero = bell_zero.measure_qubit(0U, 0.75);
+            require(!zero.outcome && std::abs(bell_zero.probabilities()[0] - 1.0) < 1e-9,
+                    "The 0 outcome must collapse the Bell pair onto |00>.");
+
+            bool sampleRejected = false;
+            try { (void)bell_zero.measure_qubit(0U, 1.0); }
+            catch (const std::invalid_argument&) { sampleRejected = true; }
+            require(sampleRejected, "A measurement sample outside [0, 1) must be rejected.");
+        }
+
         std::cout << "QuantumSmokeTests passed.\n";
         return 0;
     }

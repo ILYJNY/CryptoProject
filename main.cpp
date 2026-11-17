@@ -11,6 +11,9 @@
 #include "IntegratedCryptoAnalysis/IntegratedCryptoAnalysis.h"
 #include "EducationalCryptoSetAnalysis/EducationalCryptoSetAnalysis.h"
 #include "IntegratedEducationalCryptoAnalysis/IntegratedEducationalCryptoAnalysis.h"
+#include "EducationalQuantumAttack/EducationalQuantumAttack.h"
+#include "IntegratedEducationalQuantumAttack/IntegratedEducationalQuantumAttack.h"
+#include "IntegratedEducationalQuantumAttack/QuantumAttackExport.h"
 #include "IntegratedMode/IntegratedRunner.h"
 #include "Benchmark/BenchmarkRunner.h"
 #include "ComputeEngine/ComputeEngine.h"
@@ -19,6 +22,7 @@
 #include "QuantumAttack/Educational/Experiments/EducationalExperiments.h"
 #include "QuantumAttack/Educational/Visualization/QuantumVisualizer.h"
 #include "QuantumAttack/Reports/QuantumReport.h"
+#include "QuantumAttack/Benchmark/AlgorithmBenchmark.h"
 #include "ErrorHandling/CryptoException.h"
 #include "Logger/Logger.h"
 #include "PerformanceMonitor/PerformanceMonitor.h"
@@ -605,6 +609,138 @@ namespace
         }
         std::cout << "This is a classical state-vector simulation. No quantum hardware is used.\n";
     }
+
+    // ---------------------------------------------------------------------------------
+    // 2.3.5: Educational Quantum Attack / Integrated Educational Quantum Attack /
+    // Quantum Simulator Benchmark. These are separate from the classical educational
+    // analyses under "Educational Mode" and from the generic simulator demos above.
+    // ---------------------------------------------------------------------------------
+
+    std::string read_quantum_attack_message()
+    {
+        std::cout << "The message is encrypted by each toy set before the analysis.\n"
+                  << "Press Enter to use the default demonstration message.\n";
+        return read_message();
+    }
+
+    crypto::educational_quantum_attack::QuantumAttackConfig read_quantum_attack_config()
+    {
+        crypto::educational_quantum_attack::QuantumAttackConfig config;
+        std::cout << "Simulator backend for the circuits that are executed\n"
+                  << "1. CPU multi-thread (default)\n"
+                  << "2. CPU single-thread\n"
+                  << "3. CUDA GPU\n"
+                  << "4. CUDA multi-GPU\n";
+        switch (read_choice(1, 4))
+        {
+        case 2: config.execution.backend = crypto::quantum::QuantumBackendType::CpuSingleThread; break;
+        case 3: config.execution.backend = crypto::quantum::QuantumBackendType::CudaGpu; break;
+        case 4: config.execution.backend = crypto::quantum::QuantumBackendType::CudaMultiGpu; break;
+        default: config.execution.backend = crypto::quantum::QuantumBackendType::CpuMultiThread; break;
+        }
+        std::cout << "If the selected CUDA backend is unavailable, the circuits run on the CPU and the\n"
+                  << "report says so; a CPU run is never reported as a GPU run.\n";
+        config.progress = [](const std::string& message) { std::cout << "  ... " << message << '\n'; };
+        return config;
+    }
+
+    void export_quantum_attack_sets(
+        const std::vector<crypto::educational_quantum_attack::SetAttackReport>& reports)
+    {
+        using namespace crypto::educational_quantum_attack;
+        ExportedFiles files;
+        if (export_quantum_attack_reports(reports, std::string(DefaultQuantumAttackOutputDirectory), files))
+        {
+            for (const auto& path : files.set_reports) std::cout << "Report saved: " << path << '\n';
+            std::cout << "Metrics CSV saved: " << files.metrics_csv << '\n'
+                      << "Metrics JSON saved: " << files.metrics_json << '\n';
+        }
+        else
+        {
+            std::cout << "Warning: could not export the quantum attack reports.\n";
+        }
+    }
+
+    void show_educational_quantum_attack()
+    {
+        using namespace crypto::educational_quantum_attack;
+        bool back = false;
+        while (!back)
+        {
+            std::cout << "\n========== Educational Quantum Attack ==========\n"
+                      << "Independent quantum-attack analysis of each educational set (toy parameters).\n"
+                      << "Executed circuits: Grover (Toy AES, Toy SHA preimage), BHT (Toy SHA collision).\n"
+                      << "Theory only: Shor for Toy ECC / Toy RSA. NOT MODELED: Toy Module-LWE.\n"
+                      << "1. AES-SHA-ECDSA analogue\n"
+                      << "2. AES-SHA-RSAPSS analogue\n"
+                      << "3. SHA-AES-MLKEM analogue\n"
+                      << "4. All three sets, each analyzed independently\n"
+                      << "0. Back\n";
+            const int choice = read_choice(0, 4);
+            if (choice == 0)
+            {
+                back = true;
+                continue;
+            }
+            const std::string message = read_quantum_attack_message();
+            const QuantumAttackConfig config = read_quantum_attack_config();
+            std::vector<SetAttackReport> reports;
+            if (choice == 1) reports.push_back(run_aes_sha_ecdsa_quantum_attack(message, config));
+            else if (choice == 2) reports.push_back(run_aes_sha_rsapss_quantum_attack(message, config));
+            else if (choice == 3) reports.push_back(run_sha_aes_mlkem_quantum_attack(message, config));
+            else reports = run_all_quantum_attacks(message, config);
+
+            for (const auto& report : reports) std::cout << '\n' << format_set_report(report);
+            std::cout << "\n========== Overview ==========\n" << format_set_overview(reports) << '\n';
+            export_quantum_attack_sets(reports);
+        }
+    }
+
+    void show_integrated_educational_quantum_attack()
+    {
+        namespace integrated = crypto::integrated_educational_quantum_attack;
+        std::cout << "\n========== Integrated Educational Quantum Attack ==========\n"
+                  << "Runs the three independent quantum-attack analyses and compares their results.\n"
+                  << "The three sets are NOT merged, and the estimated times are NOT added together.\n";
+        const std::string message = read_quantum_attack_message();
+        const auto config = read_quantum_attack_config();
+        const integrated::IntegratedResult result = integrated::run(message, config);
+        std::cout << '\n' << result.report << '\n';
+
+        integrated::IntegratedExportedFiles files;
+        if (integrated::export_integrated_result(
+                result, std::string(integrated::DefaultIntegratedOutputDirectory), files))
+        {
+            std::cout << "Integrated report saved: " << files.report << '\n'
+                      << "Integrated metrics CSV saved: " << files.metrics_csv << '\n'
+                      << "Comparison CSV saved: " << files.comparison_csv << '\n'
+                      << "Metrics JSON saved: " << files.metrics_json << '\n';
+        }
+        else
+        {
+            std::cout << "Warning: could not export the integrated quantum attack report.\n";
+        }
+    }
+
+    void show_quantum_simulator_benchmark()
+    {
+        std::cout << "\n========== Quantum Simulator Benchmark ==========\n"
+                  << "General performance of the QuantumAttack state-vector simulator (Grover, QFT and the\n"
+                  << "toy Shor experiment) on every backend. This is NOT an attack on any cryptosystem.\n";
+        crypto::quantum::AlgorithmBenchmarkOptions options;
+        options.qubit_counts = {4U, 8U, 10U};
+        options.repeats = 3U;
+        options.warmup_runs = 1U;
+        options.shots = 512U;
+        const auto results = crypto::quantum::run_algorithm_benchmark(options);
+        for (const auto& result : results)
+            std::cout << crypto::quantum::format_algorithm_benchmark_result(result) << '\n';
+        std::cout << "CSV report: "
+                  << crypto::quantum::export_algorithm_benchmark_csv(results, "Output/quantum_simulator_benchmark.csv")
+                  << '\n'
+                  << "Backends marked UNAVAILABLE were not run; their rows are never filled with CPU timings.\n"
+                  << "All timings are classical state-vector simulation times, not quantum-hardware times.\n";
+    }
 }
 
 int main()
@@ -626,9 +762,12 @@ int main()
                       << "6. Educational Integrated Analysis (toy instances)\n"
                       << "7. Benchmark\n"
                       << "8. Compute Engine\n"
+                      << "9. Educational Quantum Attack (three independent toy sets)\n"
+                      << "10. Integrated Educational Quantum Attack (compare the three sets)\n"
+                      << "11. Quantum Simulator Benchmark (QuantumAttack engine)\n"
                       << "0. Exit\n";
 
-            switch (read_choice(0, 8))
+            switch (read_choice(0, 11))
             {
             case 1: show_crypto_set_analysis(); break;
             case 2: show_integrated_crypto_analysis(); break;
@@ -658,6 +797,9 @@ int main()
                           << "This menu currently displays devices; it does not launch a compute workload.\n";
                 break;
             }
+            case 9: show_educational_quantum_attack(); break;
+            case 10: show_integrated_educational_quantum_attack(); break;
+            case 11: show_quantum_simulator_benchmark(); break;
             default:
                 running = false;
                 break;

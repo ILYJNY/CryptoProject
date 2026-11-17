@@ -108,6 +108,7 @@ namespace crypto::quantum
     std::size_t QuantumSimulator::state_vector_bytes() const noexcept { return amplitudes_.size() * sizeof(Complex); }
     std::size_t QuantumSimulator::gate_count() const noexcept { return gate_count_; }
     std::size_t QuantumSimulator::operation_depth() const noexcept { return operation_depth_; }
+    std::size_t QuantumSimulator::measurement_count() const noexcept { return measurement_count_; }
 
     const std::vector<Complex>& QuantumSimulator::state() const
     {
@@ -220,6 +221,7 @@ namespace crypto::quantum
         mark_host_state_modified();
         gate_count_ = 0U;
         operation_depth_ = 0U;
+        measurement_count_ = 0U;
     }
 
     void QuantumSimulator::set_basis_state(const std::size_t basis_index)
@@ -233,6 +235,7 @@ namespace crypto::quantum
         mark_host_state_modified();
         gate_count_ = 0U;
         operation_depth_ = 0U;
+        measurement_count_ = 0U;
     }
 
     void QuantumSimulator::validate_qubit(const std::size_t qubit) const
@@ -540,6 +543,57 @@ namespace crypto::quantum
         const std::size_t n = target_qubits.size();
         gate_count_ += n + (n * (n - 1U)) / 2U + 3U * (n / 2U);
         ++operation_depth_;
+    }
+
+    void QuantumSimulator::apply_phase_shift(const std::size_t target, const double angle_radians)
+    {
+        validate_qubit(target);
+        if (!std::isfinite(angle_radians))
+            throw std::invalid_argument("The phase-shift angle must be finite.");
+        // The CUDA backends expose a controlled-phase kernel but no single-qubit phase
+        // kernel, so this gate uses the CPU reference path, as controlled permutations do.
+        sync_host_from_cuda();
+        const auto start = Clock::now();
+        cpu_backend_->apply_phase_shift(amplitudes_, target, angle_radians);
+        record_cpu_operation(elapsed_ms(start));
+        mark_host_state_modified();
+        ++gate_count_;
+        ++operation_depth_;
+        if (execution_options_.backend == QuantumBackendType::CudaGpu ||
+            execution_options_.backend == QuantumBackendType::CudaMultiGpu)
+        {
+            ++backend_statistics_.cpu_fallback_operations;
+        }
+    }
+
+    QubitMeasurement QuantumSimulator::measure_qubit(const std::size_t target, const double uniform_sample)
+    {
+        validate_qubit(target);
+        if (!(uniform_sample >= 0.0 && uniform_sample < 1.0))
+            throw std::invalid_argument("The measurement sample must lie in the interval [0, 1).");
+        sync_host_from_cuda();
+        const auto start = Clock::now();
+
+        QubitMeasurement result;
+        result.probability_of_one = std::clamp(
+            cpu_backend_->probability_of_one(amplitudes_, target), 0.0, 1.0);
+        result.outcome = uniform_sample < result.probability_of_one;
+        result.outcome_probability = result.outcome
+            ? result.probability_of_one : 1.0 - result.probability_of_one;
+        if (!(result.outcome_probability > 0.0))
+            throw std::runtime_error("The sampled measurement outcome has zero probability.");
+        cpu_backend_->collapse_qubit(amplitudes_, target, result.outcome, result.outcome_probability);
+
+        record_cpu_operation(elapsed_ms(start));
+        mark_host_state_modified();
+        ++measurement_count_;
+        ++operation_depth_;
+        if (execution_options_.backend == QuantumBackendType::CudaGpu ||
+            execution_options_.backend == QuantumBackendType::CudaMultiGpu)
+        {
+            ++backend_statistics_.cpu_fallback_operations;
+        }
+        return result;
     }
 
     std::vector<double> QuantumSimulator::probabilities() const

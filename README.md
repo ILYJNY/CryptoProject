@@ -1,4 +1,4 @@
-# CryptoProject v2.3.4
+# CryptoProject v2.3.5
 
 A modular C++20 learning project that brings together standard cryptographic demonstrations,
 small educational cryptosystems, defensive validation, a classical quantum state-vector simulator,
@@ -32,6 +32,11 @@ every MSVC version. See the [NVIDIA CUDA Windows installation guide](https://doc
 6. **Educational Integrated Analysis** — legacy toy-instance demonstrations and analyzer comparisons.
 7. **Benchmark** — repeated SHA-256 CPU timing with detailed and summary CSV output.
 8. **Compute Engine** — CUDA device discovery in the console menu; the C++ API exposes vector-add, short-message SHA-256 batch, and selected state-vector CUDA operations.
+9. **Educational Quantum Attack** *(2.3.5)* — independent quantum-attack analysis of each educational set on its real toy parameters: Grover on Toy AES and on the Toy SHA preimage, Brassard–Høyer–Tapp on the Toy SHA collision. Toy ECC and Toy RSA are matched with Shor but are theory only (circuits not implemented); Toy Module-LWE is NOT MODELED.
+10. **Integrated Educational Quantum Attack** *(2.3.5)* — runs the three independent quantum-attack analyses and compares them. It does not merge the cryptosystems and does not sum estimated attack times.
+11. **Quantum Simulator Benchmark** *(2.3.5)* — general performance of the QuantumAttack simulator (Grover, QFT, toy Shor) on every backend; not an attack.
+
+See `README_2.3.5.md` and `QUANTUM_ATTACK_DESIGN.md` for entries 9–11.
 
 ## 3. Standard cryptographic algorithms (primitive-level diagnostics)
 
@@ -277,6 +282,11 @@ CryptoProject/
 │   ├── Standard/
 │   ├── Educational/
 │   └── Reports/
+├── EducationalCryptoSetAnalysis/ (classical analysis of the three toy sets)
+├── IntegratedEducationalCryptoAnalysis/
+├── EducationalQuantumAttack/ (2.3.5: independent quantum-attack analysis of the toy sets)
+│   ├── Common/ Engine/ Attacks/ Sets/ Tests/
+├── IntegratedEducationalQuantumAttack/ (2.3.5: comparison of the three quantum-attack analyses)
 ├── IntegratedMode/ (legacy toy educational integrated analysis)
 ├── Benchmark/
 ├── Tests/
@@ -285,6 +295,13 @@ CryptoProject/
 ```
 
 ## 12. Test status
+
+**2.3.5:** nine CTest targets are registered: `CommonSmokeTests`, `ComputeEngineSmokeTests`,
+`ProjectSmokeTests`, `QuantumSmokeTests`, `MLKEM768SmokeTests`, `CryptoSetAnalysisSmokeTests`,
+`EducationalCryptoSetAnalysisSmokeTests`, `EducationalQuantumAttackTests` and
+`IntegratedEducationalQuantumAttackTests`. All nine passed in a CPU-only Linux environment with
+GCC 13.3 (Release and Debug) and Clang 18.1 (Release). Windows/MSVC compilation and CUDA compilation
+or GPU execution were not verified for 2.3.5. The paragraph below is the earlier status record.
 
 Six CTest targets are included: `CommonSmokeTests`, `ComputeEngineSmokeTests`, `ProjectSmokeTests`,
 `QuantumSmokeTests`, `MLKEM768SmokeTests`, and `CryptoSetAnalysisSmokeTests`. The current source was configured and built in a
@@ -334,3 +351,28 @@ The custom-message simulation now binds the 16-bit truncated SHA-256 digest of t
 The custom-message mode also performs restricted-keyspace AES-GCM encryption, key search, decryption, and exact plaintext comparison independently for all three sets. Collision-search benchmarking remains a separate experiment.
 
 **Limitations:** Toy SHA outputs only 16 bits; the AES-GCM primitive is standard AES-128-GCM but its unknown keyspace is reduced to 12 bits; ECC, RSA, and Module-LWE remain deliberately tiny educational analogues. The SHA-derived ECC response, RSA representative, and Module-LWE KDF are teaching constructions, not standardized ECDSA, RSA-PSS, or ML-KEM protocols.
+
+
+## Educational quantum attack analysis (2.3.5)
+
+Two modules were added next to the classical educational analyses; both are separate from them.
+
+- `EducationalQuantumAttack/` analyzes each toy set independently on its real parameters. It runs
+  Grover against the 12-bit Toy AES key space and against the 16-bit Toy SHA preimage problem, and the
+  Brassard–Høyer–Tapp algorithm against Toy SHA collisions, on the QuantumAttack state-vector
+  simulator. A recovered key, preimage or collision is always verified classically.
+- `IntegratedEducationalQuantumAttack/` runs the three analyses and compares them.
+
+**Not implemented:** the Shor circuits for Toy ECC (elliptic-curve discrete logarithm) and for Toy
+RSA (factoring the generated modulus). Their reports are theory only, with resource estimates from
+published formulas, and no ECC scalar or RSA factor is recovered by a quantum method. The existing
+`N = 15` toy Shor run is shown only as a separate algorithm-validation experiment. Toy Module-LWE is
+`NOT MODELED`: Shor does not apply to it and no figure is given. Each set therefore reports `PARTIAL`.
+
+Reports keep three times apart — quantum simulator runtime (measured), estimated quantum attack time
+(scenario estimate), classical attack runtime (measured) — and write a missing value as
+`NOT MODELED` / `NOT EXECUTED` / `N/A`, never as `0`. All qubit counts are logical qubits.
+
+Menu: `9. Educational Quantum Attack`, `10. Integrated Educational Quantum Attack`,
+`11. Quantum Simulator Benchmark`. Details: `README_2.3.5.md`, `QUANTUM_ATTACK_DESIGN.md`,
+`CHANGELOG_2.3.5.md`.
