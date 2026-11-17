@@ -661,6 +661,32 @@ namespace
         }
     }
 
+    void show_message_crack_timing()
+    {
+        using namespace crypto::educational_quantum_attack;
+        std::cout << "\n========== Message Crack-Time Measurement ==========\n"
+                  << "Enter a sentence. Each independent toy set encrypts it with the restricted\n"
+                  << "12-bit Toy AES-128-GCM, then the key is recovered and the sentence decrypted.\n"
+                  << "The measured crack time applies only to this educational 12-bit toy, not to AES-128.\n";
+        const std::string message = read_message();
+        const QuantumAttackConfig config = read_quantum_attack_config();
+        const MessageCrackReport report = run_message_crack_timing(message, config);
+        std::cout << '\n' << report.report;
+        if (report.plaintext_empty) return;
+        std::string report_path;
+        std::string csv_path;
+        if (export_message_crack_report(
+                report, std::string(DefaultCrackOutputDirectory), report_path, csv_path))
+        {
+            std::cout << "Report saved: " << report_path << '\n'
+                      << "Metrics CSV saved: " << csv_path << '\n';
+        }
+        else
+        {
+            std::cout << "Warning: could not export the message crack report.\n";
+        }
+    }
+
     void show_educational_quantum_attack()
     {
         using namespace crypto::educational_quantum_attack;
@@ -675,11 +701,17 @@ namespace
                       << "2. AES-SHA-RSAPSS analogue\n"
                       << "3. SHA-AES-MLKEM analogue\n"
                       << "4. All three sets, each analyzed independently\n"
+                      << "5. Enter a sentence, encrypt it and measure the crack time\n"
                       << "0. Back\n";
-            const int choice = read_choice(0, 4);
+            const int choice = read_choice(0, 5);
             if (choice == 0)
             {
                 back = true;
+                continue;
+            }
+            if (choice == 5)
+            {
+                show_message_crack_timing();
                 continue;
             }
             const std::string message = read_quantum_attack_message();

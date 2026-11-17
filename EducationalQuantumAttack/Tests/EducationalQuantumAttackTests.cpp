@@ -690,6 +690,71 @@ namespace
         require(mlkem.id == SetId::ShaAesMlKem && mlkem.attacks[3].execution == ExecutionStatus::NotModeled,
                 "The ML-KEM-analogue set failed to run.");
     }
+
+    // ---------------------------------------------------------------------------------
+    // Message crack-timing feature: enter a sentence, encrypt it, crack it, time the crack
+    // ---------------------------------------------------------------------------------
+    void test_message_crack_timing()
+    {
+        const QuantumAttackConfig config = test_config(9009U);
+
+        // An empty sentence encrypts and cracks nothing.
+        const MessageCrackReport empty = run_message_crack_timing(std::string(), config);
+        require(empty.plaintext_empty && empty.sets.empty(), "An empty sentence must crack nothing.");
+        require(contains(empty.report, "No sentence"), "The empty report must say nothing was cracked.");
+
+        const std::string sentence = "The quick brown fox.";
+        const MessageCrackReport report = run_message_crack_timing(sentence, config);
+        require(!report.plaintext_empty && report.plaintext == sentence, "The sentence must be preserved.");
+        require(report.sets.size() == 3U, "The sentence must be cracked in all three independent toy sets.");
+        require(contains(report.report, "CRACK TIME") && contains(report.report, "toy parameters"),
+                "The report must present the crack time and stay labeled as a toy.");
+        require(contains(report.report, sentence), "The report must echo the entered sentence.");
+
+        for (const MessageCrackSetResult& set : report.sets)
+        {
+            require(set.unknown_key_bits == educational::ToySetAesUnknownKeyBits &&
+                    set.key_space == (std::size_t{1} << educational::ToySetAesUnknownKeyBits),
+                    "Each set must encrypt with the 12-bit toy key space.");
+            require(set.ciphertext_bytes > 0U, "The sentence must actually be encrypted.");
+
+            // The classical crack recovers the key and decrypts the exact sentence, and its
+            // time is a measured value.
+            require(set.classical_recovered && set.classical_plaintext_matches &&
+                    set.classical_decrypted == sentence,
+                    "The classical crack must recover the key and the exact sentence.");
+            require(set.classical_crack_ms.kind == MetricKind::Measured &&
+                    set.classical_crack_ms.value >= 0.0L,
+                    "The classical crack time must be a measured value.");
+            require(set.classical_keys_tried.kind == MetricKind::Measured &&
+                    set.classical_keys_tried.value > 0.0L, "The classical crack must try keys.");
+
+            // The quantum Grover crack recovers the key; the simulator runtime is measured and
+            // the estimated quantum time is an estimate. The two are not the same quantity.
+            require(set.quantum_executed && set.quantum_recovered, "The Grover crack must recover the key.");
+            require(set.quantum_simulator_ms.kind == MetricKind::Measured,
+                    "The Grover simulator runtime must be a measured value.");
+            require(set.quantum_estimated_seconds.kind == MetricKind::Estimated,
+                    "The estimated quantum attack time must be an estimate, not a measurement.");
+            require(set.grover_iterations.has_value() && set.grover_iterations.value > 0.0L,
+                    "The Grover crack must record its iterations.");
+            require(set.simulated_qubits.value == static_cast<long double>(educational::ToySetAesUnknownKeyBits),
+                    "The simulated register must hold the 12 toy key bits.");
+        }
+
+        // File export.
+        const std::string directory = "MessageCrackTestOutput";
+        std::filesystem::remove_all(directory);
+        std::string report_path;
+        std::string csv_path;
+        require(export_message_crack_report(report, directory, report_path, csv_path),
+                "The message crack export failed.");
+        require(std::filesystem::exists(report_path) && std::filesystem::file_size(report_path) > 0U &&
+                std::filesystem::exists(csv_path) && std::filesystem::file_size(csv_path) > 0U,
+                "The message crack export files are missing.");
+        require(contains(read_file(csv_path), "classical_crack_ms"), "The crack CSV is missing its columns.");
+        std::filesystem::remove_all(directory);
+    }
 }
 
 int main()
@@ -710,6 +775,7 @@ int main()
         test_set_status_logic();
         test_three_independent_sets();
         test_individual_set_entry_points();
+        test_message_crack_timing();
         std::cout << "[PASS] Educational quantum attack tests completed successfully.\n";
         return 0;
     }

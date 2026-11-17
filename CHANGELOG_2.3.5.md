@@ -16,6 +16,9 @@
     circuit for that modulus is **not implemented**. The existing `N = 15` toy Shor run appears only
     as a separate algorithm-validation experiment.
   - Toy Module-LWE: **NOT MODELED**. Shor is not applied; no qubit, gate, depth or time figure is given.
+  - **Message crack-timing**: enter a sentence, encrypt it with each set's 12-bit Toy AES, crack it
+    (classical key-space search and Grover), and report the crack times side by side. Menu entry
+    `9 -> 5`. Exports `message_crack_report.txt` and `message_crack_metrics.csv`.
 - **`IntegratedEducationalQuantumAttack/`** — a new, separate module that runs the three independent
   quantum-attack analyses and compares them: comparison table, CPU/GPU/memory table, aggregates,
   highlights with caveats, applicability, the list of NOT EXECUTED / NOT MODELED items, assumptions

@@ -257,6 +257,7 @@ has a `_kind` companion column with the provenance.
 ```text
 EducationalQuantumAttack/
 ├── EducationalQuantumAttack.h/.cpp      entry points for one set or all three
+├── MessageCrack.h/.cpp                enter a sentence, encrypt it, crack it, report the crack time
 ├── Common/
 │   ├── QuantumAttackTypes.h             Metric, AttackResult, SetAttackReport, configuration
 │   ├── QuantumAttackSupport.h/.cpp      formatting, process measurements, backend, budget

@@ -259,6 +259,7 @@ crypto_apply_compiler_options(crypto_integrated_educational_analysis)
 # state-vector simulator as its engine and attacks the real toy parameters.
 add_library(crypto_educational_quantum_attack STATIC
         EducationalQuantumAttack/EducationalQuantumAttack.cpp
+        EducationalQuantumAttack/MessageCrack.cpp
         EducationalQuantumAttack/Common/QuantumAttackSupport.cpp
         EducationalQuantumAttack/Common/QuantumAttackReport.cpp
         EducationalQuantumAttack/Engine/GroverEngine.cpp

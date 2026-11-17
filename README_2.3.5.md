@@ -78,6 +78,9 @@ Please read the last three rows carefully:
 
 - **9** asks which set to analyze (or all three, independently), a message, and the simulator
   backend. It prints the full report and writes the files listed in section 4.
+- **9 → 5** (*Enter a sentence, encrypt it and measure the crack time*) encrypts a typed sentence
+  with each set's 12-bit Toy AES, cracks it both classically and with Grover, and reports the
+  crack times side by side. The crack time is for the 12-bit toy only, not for AES-128.
 - **10** runs all three analyses, prints the integrated comparison and writes its files.
 - **11** runs the existing `QuantumAttack` algorithm benchmark (Grover, QFT, toy Shor) on every
   backend. It measures the simulator, not an attack.
@@ -129,7 +132,9 @@ Output/EducationalQuantumAttack/
 ├── aes_sha_rsapss_quantum_report.txt
 ├── sha_aes_mlkem_quantum_report.txt
 ├── quantum_attack_metrics.csv
-└── quantum_attack_metrics.json
+├── quantum_attack_metrics.json
+├── message_crack_report.txt        (menu 9 -> 5)
+└── message_crack_metrics.csv        (menu 9 -> 5)
 
 Output/IntegratedEducationalQuantumAttack/
 ├── integrated_quantum_report.txt
